@@ -1,7 +1,6 @@
 package com.opcgdb_api.entity;
 
 import com.opcgdb_api.entity.key.CardColorKey;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

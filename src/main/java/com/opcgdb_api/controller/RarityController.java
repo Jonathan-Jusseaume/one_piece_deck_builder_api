@@ -1,11 +1,12 @@
 package com.opcgdb_api.controller;
 
-import com.opcgdb_api.dto.Attribute;
 import com.opcgdb_api.dto.Rarity;
-import com.opcgdb_api.service.AttributeService;
 import com.opcgdb_api.service.RarityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 

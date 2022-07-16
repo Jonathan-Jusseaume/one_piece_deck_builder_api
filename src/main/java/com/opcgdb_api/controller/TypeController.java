@@ -1,8 +1,6 @@
 package com.opcgdb_api.controller;
 
-import com.opcgdb_api.dto.Attribute;
 import com.opcgdb_api.dto.Type;
-import com.opcgdb_api.service.AttributeService;
 import com.opcgdb_api.service.TypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;

@@ -1,8 +1,6 @@
 package com.opcgdb_api.dto;
 
 import com.opcgdb_api.constant.LanguageCodeEnum;
-import com.opcgdb_api.entity.AttributeDescriptionEntity;
-import com.opcgdb_api.entity.AttributeEntity;
 import com.opcgdb_api.entity.ColorDescriptionEntity;
 import com.opcgdb_api.entity.ColorEntity;
 import lombok.Getter;

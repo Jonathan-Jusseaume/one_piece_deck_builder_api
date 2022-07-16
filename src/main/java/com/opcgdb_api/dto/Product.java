@@ -1,8 +1,6 @@
 package com.opcgdb_api.dto;
 
 import com.opcgdb_api.constant.LanguageCodeEnum;
-import com.opcgdb_api.entity.AttributeDescriptionEntity;
-import com.opcgdb_api.entity.AttributeEntity;
 import com.opcgdb_api.entity.ProductDescriptionEntity;
 import com.opcgdb_api.entity.ProductEntity;
 import lombok.Getter;
@@ -27,6 +25,7 @@ public class Product {
             languageCode = LanguageCodeEnum.ENGLISH.toString();
         }
         this.id = productEntity.getId();
+        this.releaseDate = productEntity.getReleaseDate();
         for (ProductDescriptionEntity description : productEntity.getDescriptions()) {
             if (description.getLanguageCode().equals(languageCode)) {
                 this.label = description.getName();

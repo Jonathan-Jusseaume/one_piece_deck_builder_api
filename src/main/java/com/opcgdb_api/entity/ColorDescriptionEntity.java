@@ -1,13 +1,11 @@
 package com.opcgdb_api.entity;
 
 import com.opcgdb_api.entity.key.ColorDescriptionKey;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Getter
 @Setter

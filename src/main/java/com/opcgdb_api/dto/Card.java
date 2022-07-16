@@ -1,12 +1,12 @@
 package com.opcgdb_api.dto;
 
 import com.opcgdb_api.constant.LanguageCodeEnum;
-import com.opcgdb_api.entity.*;
+import com.opcgdb_api.entity.CardDescriptionEntity;
+import com.opcgdb_api.entity.CardEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.*;
 import java.util.List;
 import java.util.stream.Collectors;
 

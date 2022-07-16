@@ -1,6 +1,5 @@
 package com.opcgdb_api.entity;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
