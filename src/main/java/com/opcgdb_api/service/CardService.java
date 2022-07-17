@@ -43,14 +43,16 @@ public class CardService {
                     .collect(Collectors.toSet())));
         }
         if (cardFilter.getColors() != null && !cardFilter.getColors().isEmpty()) {
-            builder.with(CardSpecification.byColorId(cardFilter.getColors()
-                    .stream().map(Color::getId)
-                    .collect(Collectors.toSet())));
+            cardFilter.getColors()
+                    .stream()
+                    .map(Color::getId)
+                    .forEach(id -> builder.with(CardSpecification.byColorId(id)));
         }
         if (cardFilter.getTags() != null && !cardFilter.getTags().isEmpty()) {
-            builder.with(CardSpecification.byTagId(cardFilter.getTags()
-                    .stream().map(Tag::getId)
-                    .collect(Collectors.toSet())));
+            cardFilter.getTags()
+                    .stream()
+                    .map(Tag::getId)
+                    .forEach(id -> builder.with(CardSpecification.byTagId(id)));
         }
 
 

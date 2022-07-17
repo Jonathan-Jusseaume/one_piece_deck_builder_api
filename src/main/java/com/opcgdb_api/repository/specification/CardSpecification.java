@@ -6,6 +6,8 @@ import com.opcgdb_api.entity.ColorEntity;
 import com.opcgdb_api.entity.TagEntity;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.SetJoin;
 import java.util.Set;
 
@@ -17,17 +19,17 @@ public class CardSpecification {
                 .value(typesId);
     }
 
-    public static Specification<CardEntity> byColorId(Set<Long> colorsId) {
+    public static Specification<CardEntity> byColorId(Long colorId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
             SetJoin<CardEntity, ColorEntity> join = root.joinSet("colors");
-            return join.get("id").in(colorsId);
+            return join.get("id").in(colorId);
         });
     }
 
-    public static Specification<CardEntity> byTagId(Set<Long> tagsId) {
+    public static Specification<CardEntity> byTagId(Long tagId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            SetJoin<CardEntity, TagEntity> join = root.joinSet("tags");
-            return join.get("id").in(tagsId);
+            Join<CardEntity, TagEntity> join = root.join("tags", JoinType.INNER);
+            return criteriaBuilder.in(join.get("id")).value(tagId);
         });
     }
 
