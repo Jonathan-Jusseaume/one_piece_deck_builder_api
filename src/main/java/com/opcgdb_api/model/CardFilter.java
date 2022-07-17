@@ -17,5 +17,4 @@ public class CardFilter {
     private Set<Type> types;
     private Set<Color> colors;
     private Set<Tag> tags;
-    private Pageable pageable;
 }

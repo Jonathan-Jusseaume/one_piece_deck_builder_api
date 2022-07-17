@@ -32,8 +32,7 @@ public class CardService {
                 .collect(Collectors.toList());
     }
 
-    public Page<Card> search(CardFilter cardFilter, String languageCode) {
-        Pageable pageable = cardFilter.getPageable();
+    public Page<Card> search(CardFilter cardFilter, String languageCode, Pageable pageable) {
         if (pageable == null) {
             pageable = Pageable.ofSize(25);
         }
