@@ -16,6 +16,10 @@ public class Color {
 
     private String label;
 
+    public Color() {
+
+    }
+
     public Color(ColorEntity colorEntity, String languageCode) {
         if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {
             languageCode = LanguageCodeEnum.ENGLISH.toString();

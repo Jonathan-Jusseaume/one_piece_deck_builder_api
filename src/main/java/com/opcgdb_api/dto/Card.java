@@ -51,7 +51,9 @@ public class Card {
         this.type = new Type(cardEntity.getType(), languageCode);
         this.product = new Product(cardEntity.getProduct(), languageCode);
         this.rarity = new Rarity(cardEntity.getRarity());
-        this.attribute = new Attribute(cardEntity.getAttribute(), languageCode);
+        if (cardEntity.getAttribute() != null) {
+            this.attribute = new Attribute(cardEntity.getAttribute(), languageCode);
+        }
         this.cost = cardEntity.getCost();
         this.counter = cardEntity.getCounter();
         this.life = cardEntity.getLife();

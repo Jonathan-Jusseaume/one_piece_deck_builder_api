@@ -1,5 +1,6 @@
 package com.opcgdb_api.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.TagDescriptionEntity;
 import com.opcgdb_api.entity.TagEntity;
@@ -10,11 +11,16 @@ import lombok.experimental.Accessors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@JsonDeserialize
 public class Tag {
 
     private Long id;
 
     private String label;
+
+    public Tag() {
+
+    }
 
     public Tag(TagEntity tagEntity, String languageCode) {
         if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {

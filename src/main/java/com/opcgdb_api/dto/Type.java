@@ -16,6 +16,10 @@ public class Type {
 
     private String label;
 
+    public Type() {
+
+    }
+
     public Type(TypeEntity typeEntity, String languageCode) {
         if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {
             languageCode = LanguageCodeEnum.ENGLISH.toString();
