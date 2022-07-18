@@ -13,23 +13,30 @@ import java.util.Set;
 
 public class CardSpecification {
 
+    public static Specification<CardEntity> distinct() {
+        return (root, query, cb) -> {
+            query.distinct(true);
+            return null;
+        };
+    }
+
     public static Specification<CardEntity> byTypeId(Set<Long> typesId) {
         return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder
                 .in(root.get("type").get("id"))
                 .value(typesId);
     }
 
-    public static Specification<CardEntity> byColorId(Long colorId) {
+    public static Specification<CardEntity> byColorId(Set<Long> colorsId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
             SetJoin<CardEntity, ColorEntity> join = root.joinSet("colors");
-            return join.get("id").in(colorId);
+            return join.get("id").in(colorsId);
         });
     }
 
-    public static Specification<CardEntity> byTagId(Long tagId) {
+    public static Specification<CardEntity> byTagId(Set<Long> tagsId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            Join<CardEntity, TagEntity> join = root.join("tags", JoinType.INNER);
-            return criteriaBuilder.in(join.get("id")).value(tagId);
+            SetJoin<CardEntity, TagEntity> join = root.joinSet("tags");
+            return join.get("id").in(tagsId);
         });
     }
 

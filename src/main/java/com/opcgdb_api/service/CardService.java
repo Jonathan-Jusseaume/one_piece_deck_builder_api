@@ -37,22 +37,21 @@ public class CardService {
             pageable = Pageable.ofSize(25);
         }
         SpecificationBuilder<CardEntity> builder = new SpecificationBuilder<>();
+        builder.with(CardSpecification.distinct());
         if (cardFilter.getTypes() != null && !cardFilter.getTypes().isEmpty()) {
             builder.with(CardSpecification.byTypeId(cardFilter.getTypes()
                     .stream().map(Type::getId)
                     .collect(Collectors.toSet())));
         }
         if (cardFilter.getColors() != null && !cardFilter.getColors().isEmpty()) {
-            cardFilter.getColors()
-                    .stream()
-                    .map(Color::getId)
-                    .forEach(id -> builder.with(CardSpecification.byColorId(id)));
+            builder.with(CardSpecification.byColorId(cardFilter.getColors()
+                    .stream().map(Color::getId)
+                    .collect(Collectors.toSet())));
         }
         if (cardFilter.getTags() != null && !cardFilter.getTags().isEmpty()) {
-            cardFilter.getTags()
-                    .stream()
-                    .map(Tag::getId)
-                    .forEach(id -> builder.with(CardSpecification.byTagId(id)));
+            builder.with(CardSpecification.byTagId(cardFilter.getTags()
+                    .stream().map(Tag::getId)
+                    .collect(Collectors.toSet())));
         }
 
 
