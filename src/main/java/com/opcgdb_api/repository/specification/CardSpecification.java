@@ -1,13 +1,10 @@
 package com.opcgdb_api.repository.specification;
 
-import com.opcgdb_api.dto.Card;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.entity.ColorEntity;
 import com.opcgdb_api.entity.TagEntity;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.SetJoin;
 import java.util.Set;
 
@@ -37,6 +34,12 @@ public class CardSpecification {
         return ((root, criteriaQuery, criteriaBuilder) -> {
             SetJoin<CardEntity, TagEntity> join = root.joinSet("tags");
             return join.get("id").in(tagsId);
+        });
+    }
+
+    public static Specification<CardEntity> byRarity(Set<Long> rarityId) {
+        return ((root, criteriaQuery, criteriaBuilder) -> {
+            return criteriaBuilder.in(root.get("rarity").get("id")).value(rarityId);
         });
     }
 

@@ -14,6 +14,10 @@ public class Rarity {
 
     private String label;
 
+    public Rarity() {
+
+    }
+
     public Rarity(RarityEntity rarityEntity) {
         this.id = rarityEntity.getId();
         this.label = rarityEntity.getLabel();

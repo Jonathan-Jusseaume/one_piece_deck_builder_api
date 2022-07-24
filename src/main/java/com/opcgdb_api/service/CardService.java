@@ -1,9 +1,6 @@
 package com.opcgdb_api.service;
 
-import com.opcgdb_api.dto.Card;
-import com.opcgdb_api.dto.Color;
-import com.opcgdb_api.dto.Tag;
-import com.opcgdb_api.dto.Type;
+import com.opcgdb_api.dto.*;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.model.CardFilter;
 import com.opcgdb_api.repository.CardDao;
@@ -51,6 +48,11 @@ public class CardService {
         if (cardFilter.getTags() != null && !cardFilter.getTags().isEmpty()) {
             builder.with(CardSpecification.byTagId(cardFilter.getTags()
                     .stream().map(Tag::getId)
+                    .collect(Collectors.toSet())));
+        }
+        if (cardFilter.getRarities() != null && !cardFilter.getRarities().isEmpty()) {
+            builder.with(CardSpecification.byRarity(cardFilter.getRarities()
+                    .stream().map(Rarity::getId)
                     .collect(Collectors.toSet())));
         }
 
