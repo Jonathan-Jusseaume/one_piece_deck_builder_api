@@ -52,8 +52,9 @@ public class CardEntity {
     )
     private Set<TagEntity> tags;
 
-    @Column(name = "IMAGE")
-    private String image;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "CARD_ID")
+    private Set<CardImageEntity> images;
 
     @Column(name = "COST")
     private Long cost;

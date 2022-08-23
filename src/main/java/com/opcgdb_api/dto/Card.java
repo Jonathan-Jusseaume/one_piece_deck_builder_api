@@ -3,6 +3,7 @@ package com.opcgdb_api.dto;
 import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.CardDescriptionEntity;
 import com.opcgdb_api.entity.CardEntity;
+import com.opcgdb_api.entity.CardImageEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
@@ -33,8 +34,6 @@ public class Card {
 
     private Long cost;
 
-    private String image;
-
     private Long power;
 
     private Long life;
@@ -42,6 +41,8 @@ public class Card {
     private Long counter;
 
     private Rarity rarity;
+
+    private List<String> images;
 
     public Card(CardEntity cardEntity, String languageCode) {
         if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {
@@ -57,7 +58,7 @@ public class Card {
         this.cost = cardEntity.getCost();
         this.counter = cardEntity.getCounter();
         this.life = cardEntity.getLife();
-        this.image = cardEntity.getImage();
+        this.images = cardEntity.getImages().stream().map(CardImageEntity::getName).collect(Collectors.toList());
         this.power = cardEntity.getPower();
         String finalLanguageCode = languageCode;
         this.colors = cardEntity.getColors()

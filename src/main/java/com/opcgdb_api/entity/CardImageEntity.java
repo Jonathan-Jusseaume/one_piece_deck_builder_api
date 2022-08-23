@@ -12,18 +12,16 @@ import java.io.Serializable;
 @Setter
 @Accessors(chain = true)
 @Entity
-@Table(name = "UT_CARD_COLOR", schema = "public")
-@IdClass(CardColorKey.class)
-public class CardColorEntity implements Serializable {
+@Table(name = "UT_CARD_IMAGE", schema = "public")
+public class CardImageEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     @Id
-    @Column(name = "COLOR_ID", nullable = false)
-    private Long colorId;
+    @Column(name = "ID", nullable = false)
+    private Long id;
 
-    @Id
-    @Column(name = "CARD_ID", nullable = false)
-    private String cardId;
+    @Column(name = "NAME", nullable = false)
+    private String name;
 
 }

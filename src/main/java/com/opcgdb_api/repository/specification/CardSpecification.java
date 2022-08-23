@@ -38,9 +38,7 @@ public class CardSpecification {
     }
 
     public static Specification<CardEntity> byRarity(Set<Long> rarityId) {
-        return ((root, criteriaQuery, criteriaBuilder) -> {
-            return criteriaBuilder.in(root.get("rarity").get("id")).value(rarityId);
-        });
+        return ((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.in(root.get("rarity").get("id")).value(rarityId));
     }
 
 }
