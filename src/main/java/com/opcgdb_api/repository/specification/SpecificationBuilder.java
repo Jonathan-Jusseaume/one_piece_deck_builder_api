@@ -13,7 +13,6 @@ public class SpecificationBuilder<T> {
         this.specifications = new ArrayList<>();
     }
 
-
     public final SpecificationBuilder<T> with(Specification<T> specification) {
         specifications.add(specification);
         return this;

@@ -56,6 +56,23 @@ public class CardService {
                     .collect(Collectors.toSet())));
         }
 
+        if (cardFilter.getProducts() != null && !cardFilter.getProducts().isEmpty()) {
+            builder.with(CardSpecification.byProductId(cardFilter.getProducts()
+                    .stream().map(Product::getId)
+                    .collect(Collectors.toSet())));
+        }
+
+        if (cardFilter.getCosts() != null && !cardFilter.getCosts().isEmpty()) {
+            builder.with(CardSpecification.byCost(cardFilter.getCosts()));
+        }
+
+        if (cardFilter.getPowers() != null && !cardFilter.getPowers().isEmpty()) {
+            builder.with(CardSpecification.byPower(cardFilter.getPowers()));
+        }
+
+        if (cardFilter.getKeyword() != null && !cardFilter.getKeyword().isEmpty()) {
+            builder.with(CardSpecification.byKeyword(cardFilter.getKeyword()));
+        }
 
         Page<CardEntity> results = cardDao.findAll(builder.build(), pageable);
 

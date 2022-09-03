@@ -57,15 +57,15 @@ public class CardEntity {
     private Set<CardImageEntity> images;
 
     @Column(name = "COST")
-    private Long cost;
+    private Integer cost;
 
     @Column(name = "POWER")
-    private Long power;
+    private Integer power;
 
     @Column(name = "LIFE")
-    private Long life;
+    private Integer life;
 
     @Column(name = "COUNTER")
-    private Long counter;
+    private Integer counter;
 
 }

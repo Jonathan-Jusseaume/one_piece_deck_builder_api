@@ -5,6 +5,7 @@ import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.TagDescriptionEntity;
 import com.opcgdb_api.entity.TagEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -12,15 +13,12 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @JsonDeserialize
+@NoArgsConstructor
 public class Tag {
 
     private Long id;
 
     private String label;
-
-    public Tag() {
-
-    }
 
     public Tag(TagEntity tagEntity, String languageCode) {
         if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {

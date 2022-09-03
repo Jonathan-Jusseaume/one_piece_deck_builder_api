@@ -1,10 +1,12 @@
 package com.opcgdb_api.repository.specification;
 
+import com.opcgdb_api.entity.CardDescriptionEntity;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.entity.ColorEntity;
 import com.opcgdb_api.entity.TagEntity;
 import org.springframework.data.jpa.domain.Specification;
 
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.SetJoin;
 import java.util.Set;
 
@@ -15,6 +17,25 @@ public class CardSpecification {
             query.distinct(true);
             return null;
         };
+    }
+
+    public static Specification<CardEntity> byKeyword(String keyword) {
+        return ((root, criteriaQuery, criteriaBuilder) -> {
+            SetJoin<CardEntity, CardDescriptionEntity> join = root.joinSet("descriptions");
+            Predicate predicate = null;
+            for (String word : keyword.split(" ")) {
+                Predicate predicateWord =
+                        criteriaBuilder.or(
+                                criteriaBuilder.like(criteriaBuilder.lower(join.get("effect")), "%" + word.toLowerCase() + "%"),
+                                criteriaBuilder.like(criteriaBuilder.lower(join.get("name")), "%" + word.toLowerCase() + "%"));
+                if (predicate != null) {
+                    predicate = criteriaBuilder.and(predicate, predicateWord);
+                } else {
+                    predicate = predicateWord;
+                }
+            }
+            return predicate;
+        });
     }
 
     public static Specification<CardEntity> byTypeId(Set<Long> typesId) {
@@ -41,4 +62,23 @@ public class CardSpecification {
         return ((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.in(root.get("rarity").get("id")).value(rarityId));
     }
 
+    public static Specification<CardEntity> byCost(Set<Integer> costs) {
+        return ((root, criteriaQuery, criteriaBuilder) ->
+                criteriaBuilder.and(
+                        criteriaBuilder.isNotNull(root.get("cost")),
+                        criteriaBuilder.in(root.get("cost")).value(costs)));
+    }
+
+
+    public static Specification<CardEntity> byPower(Set<Integer> powers) {
+        return ((root, criteriaQuery, criteriaBuilder) ->
+                criteriaBuilder.and(
+                        criteriaBuilder.isNotNull(root.get("power")),
+                        criteriaBuilder.in(root.get("power")).value(powers)));
+    }
+
+    public static Specification<CardEntity> byProductId(Set<String> productsId) {
+        return ((root, criteriaQuery, criteriaBuilder) ->
+                criteriaBuilder.in(root.get("product").get("id")).value(productsId));
+    }
 }

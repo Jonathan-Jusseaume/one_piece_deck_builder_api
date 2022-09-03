@@ -2,21 +2,19 @@ package com.opcgdb_api.dto;
 
 import com.opcgdb_api.entity.RarityEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Getter
 @Setter
 @Accessors(chain = true)
+@NoArgsConstructor
 public class Rarity {
 
     private Long id;
 
     private String label;
-
-    public Rarity() {
-
-    }
 
     public Rarity(RarityEntity rarityEntity) {
         this.id = rarityEntity.getId();

@@ -32,13 +32,13 @@ public class Card {
 
     private String effect;
 
-    private Long cost;
+    private Integer cost;
 
-    private Long power;
+    private Integer power;
 
-    private Long life;
+    private Integer life;
 
-    private Long counter;
+    private Integer counter;
 
     private Rarity rarity;
 
@@ -58,7 +58,7 @@ public class Card {
         this.cost = cardEntity.getCost();
         this.counter = cardEntity.getCounter();
         this.life = cardEntity.getLife();
-        this.images = cardEntity.getImages().stream().map(CardImageEntity::getName).collect(Collectors.toList());
+        this.images = cardEntity.getImages().stream().map(CardImageEntity::getName).sorted().collect(Collectors.toList());
         this.power = cardEntity.getPower();
         String finalLanguageCode = languageCode;
         this.colors = cardEntity.getColors()

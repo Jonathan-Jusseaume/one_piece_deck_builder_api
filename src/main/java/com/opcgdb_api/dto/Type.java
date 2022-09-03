@@ -4,21 +4,19 @@ import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.TypeDescriptionEntity;
 import com.opcgdb_api.entity.TypeEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 @Getter
 @Setter
 @Accessors(chain = true)
+@NoArgsConstructor
 public class Type {
 
     private Long id;
 
     private String label;
-
-    public Type() {
-
-    }
 
     public Type(TypeEntity typeEntity, String languageCode) {
         if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {

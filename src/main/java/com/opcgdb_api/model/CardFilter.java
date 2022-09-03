@@ -1,13 +1,9 @@
 package com.opcgdb_api.model;
 
-import com.opcgdb_api.dto.Color;
-import com.opcgdb_api.dto.Rarity;
-import com.opcgdb_api.dto.Tag;
-import com.opcgdb_api.dto.Type;
+import com.opcgdb_api.dto.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.domain.Pageable;
 
 import java.util.Set;
 
@@ -15,8 +11,12 @@ import java.util.Set;
 @Setter
 @ToString
 public class CardFilter {
+    private String keyword;
+    private Set<Product> products;
     private Set<Type> types;
     private Set<Color> colors;
     private Set<Tag> tags;
     private Set<Rarity> rarities;
+    private Set<Integer> costs;
+    private Set<Integer> powers;
 }
