@@ -7,7 +7,7 @@ public enum LanguageCodeEnum {
     ENGLISH("en"),
     FRENCH("fr");
 
-    private String label;
+    private final String label;
 
     LanguageCodeEnum(String label) {
         this.label = label;
@@ -18,8 +18,8 @@ public enum LanguageCodeEnum {
         return this.label;
     }
 
-    public static boolean languageIsAvailable(String languageCode) {
-        return languagesAvailable().contains(languageCode);
+    public static boolean languageIsNotAvailable(String languageCode) {
+        return !languagesAvailable().contains(languageCode);
     }
 
     private static Set<String> languagesAvailable() {

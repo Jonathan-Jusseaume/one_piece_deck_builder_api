@@ -21,7 +21,7 @@ public class Tag {
     private String label;
 
     public Tag(TagEntity tagEntity, String languageCode) {
-        if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {
+        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
             languageCode = LanguageCodeEnum.ENGLISH.toString();
         }
         this.id = tagEntity.getId();

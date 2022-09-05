@@ -2,6 +2,7 @@ package com.opcgdb_api.controller;
 
 import com.opcgdb_api.dto.Rarity;
 import com.opcgdb_api.service.RarityService;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,6 +19,7 @@ public class RarityController {
 
     private final RarityService rarityService;
 
+    @Operation(summary = "Get the list of all the different rarities")
     @GetMapping
     public List<Rarity> list() {
         return rarityService.list();

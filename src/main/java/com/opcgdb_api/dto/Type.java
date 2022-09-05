@@ -19,7 +19,7 @@ public class Type {
     private String label;
 
     public Type(TypeEntity typeEntity, String languageCode) {
-        if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {
+        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
             languageCode = LanguageCodeEnum.ENGLISH.toString();
         }
         this.id = typeEntity.getId();

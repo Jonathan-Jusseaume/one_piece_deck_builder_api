@@ -17,7 +17,7 @@ public class Attribute {
     private String label;
 
     public Attribute(AttributeEntity attributeEntity, String languageCode) {
-        if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {
+        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
             languageCode = LanguageCodeEnum.ENGLISH.toString();
         }
         this.id = attributeEntity.getId();

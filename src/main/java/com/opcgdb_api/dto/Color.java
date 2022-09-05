@@ -19,7 +19,7 @@ public class Color {
     private String label;
 
     public Color(ColorEntity colorEntity, String languageCode) {
-        if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {
+        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
             languageCode = LanguageCodeEnum.ENGLISH.toString();
         }
         this.id = colorEntity.getId();

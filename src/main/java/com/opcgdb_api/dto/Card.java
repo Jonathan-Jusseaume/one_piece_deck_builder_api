@@ -45,7 +45,7 @@ public class Card {
     private List<String> images;
 
     public Card(CardEntity cardEntity, String languageCode) {
-        if (!LanguageCodeEnum.languageIsAvailable(languageCode)) {
+        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
             languageCode = LanguageCodeEnum.ENGLISH.toString();
         }
         this.id = cardEntity.getId();

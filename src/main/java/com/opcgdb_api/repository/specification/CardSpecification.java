@@ -12,6 +12,10 @@ import java.util.Set;
 
 public class CardSpecification {
 
+    private CardSpecification() throws InstantiationException {
+        throw new InstantiationException("Can't instantiate CardSpecification");
+    }
+
     public static Specification<CardEntity> distinct() {
         return (root, query, cb) -> {
             query.distinct(true);
@@ -24,10 +28,21 @@ public class CardSpecification {
             SetJoin<CardEntity, CardDescriptionEntity> join = root.joinSet("descriptions");
             Predicate predicate = null;
             for (String word : keyword.split(" ")) {
-                Predicate predicateWord =
-                        criteriaBuilder.or(
-                                criteriaBuilder.like(criteriaBuilder.lower(join.get("effect")), "%" + word.toLowerCase() + "%"),
-                                criteriaBuilder.like(criteriaBuilder.lower(join.get("name")), "%" + word.toLowerCase() + "%"));
+                Predicate predicateWord;
+                if (word.length() > 1 && word.charAt(0) == '!') {
+                    predicateWord =
+                            criteriaBuilder.and(criteriaBuilder.not(
+                                            criteriaBuilder.like(criteriaBuilder.lower(join.get("effect")),
+                                                    "%" + word.substring(1).toLowerCase() + "%")),
+                                    criteriaBuilder.not(criteriaBuilder.like(criteriaBuilder.lower(join.get("name")),
+                                            "%" + word.substring(1).toLowerCase() + "%")));
+                } else {
+                    predicateWord =
+                            criteriaBuilder.or(
+                                    criteriaBuilder.like(criteriaBuilder.lower(join.get("effect")), "%" + word.toLowerCase() + "%"),
+                                    criteriaBuilder.like(criteriaBuilder.lower(join.get("name")), "%" + word.toLowerCase() + "%"));
+                }
+
                 if (predicate != null) {
                     predicate = criteriaBuilder.and(predicate, predicateWord);
                 } else {
