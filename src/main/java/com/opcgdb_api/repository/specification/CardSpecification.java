@@ -31,9 +31,14 @@ public class CardSpecification {
                 Predicate predicateWord;
                 if (word.length() > 1 && word.charAt(0) == '!') {
                     predicateWord =
-                            criteriaBuilder.and(criteriaBuilder.not(
-                                            criteriaBuilder.like(criteriaBuilder.lower(join.get("effect")),
-                                                    "%" + word.substring(1).toLowerCase() + "%")),
+                            criteriaBuilder.and(
+                                    criteriaBuilder.or(
+                                            criteriaBuilder.isNull(join.get("effect"))
+                                            , criteriaBuilder.not(
+                                                    criteriaBuilder.like(criteriaBuilder.lower(join.get("effect")),
+                                                            "%" + word.substring(1).toLowerCase() + "%")
+                                            )
+                                    ),
                                     criteriaBuilder.not(criteriaBuilder.like(criteriaBuilder.lower(join.get("name")),
                                             "%" + word.substring(1).toLowerCase() + "%")));
                 } else {
