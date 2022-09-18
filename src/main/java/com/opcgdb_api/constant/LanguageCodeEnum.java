@@ -18,11 +18,7 @@ public enum LanguageCodeEnum {
         return this.label;
     }
 
-    public static boolean languageIsNotAvailable(String languageCode) {
-        return !languagesAvailable().contains(languageCode);
-    }
-
-    private static Set<String> languagesAvailable() {
+    public static Set<String> languagesAvailable() {
         return Set.of(ENGLISH.toString(), FRENCH.toString());
     }
 

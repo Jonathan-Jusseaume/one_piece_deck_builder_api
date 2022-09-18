@@ -1,6 +1,5 @@
 package com.opcgdb_api.dto;
 
-import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.ColorDescriptionEntity;
 import com.opcgdb_api.entity.ColorEntity;
 import lombok.Getter;
@@ -19,9 +18,6 @@ public class Color {
     private String label;
 
     public Color(ColorEntity colorEntity, String languageCode) {
-        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
-            languageCode = LanguageCodeEnum.ENGLISH.toString();
-        }
         this.id = colorEntity.getId();
         for (ColorDescriptionEntity description : colorEntity.getDescriptions()) {
             if (description.getLanguageCode().equals(languageCode)) {

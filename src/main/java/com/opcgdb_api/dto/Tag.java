@@ -1,7 +1,6 @@
 package com.opcgdb_api.dto;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.TagDescriptionEntity;
 import com.opcgdb_api.entity.TagEntity;
 import lombok.Getter;
@@ -21,9 +20,6 @@ public class Tag {
     private String label;
 
     public Tag(TagEntity tagEntity, String languageCode) {
-        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
-            languageCode = LanguageCodeEnum.ENGLISH.toString();
-        }
         this.id = tagEntity.getId();
         for (TagDescriptionEntity description : tagEntity.getDescriptions()) {
             if (description.getLanguageCode().equals(languageCode)) {

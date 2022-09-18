@@ -1,7 +1,7 @@
 package com.opcgdb_api.controller;
 
+import com.opcgdb_api.config.LanguageResolver;
 import com.opcgdb_api.dto.Card;
-import com.opcgdb_api.model.CardFilter;
 import com.opcgdb_api.service.CardService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -13,7 +13,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -23,23 +24,39 @@ public class CardController {
 
     private final CardService cardService;
 
-    @Operation(summary = "Get the list of all the different cards")
+    private final LanguageResolver languageResolver;
+
+    @Operation(summary = "Get a page of the card list matching different criteria")
     @GetMapping
-    public List<Card> list(@Parameter(description = "Code of the language of the response")
-                           @RequestParam(name = "language", defaultValue = "en") String languageCode) {
-        return cardService.list(languageCode);
+    public Page<Card> list(
+            @PageableDefault(size = 25)
+            @SortDefault(sort = "id", direction = Sort.Direction.ASC)
+                    Pageable pageable,
+            @RequestParam(required = false, name = "productId")
+            @Parameter(name = "productId",
+                    description = "Product Id of the card. You can put multiple values")
+                    Set<String> productsId,
+            @RequestParam(required = false, name = "cost")
+            @Parameter(name = "costs",
+                    description = "Cost value of the card. You can put multiple values")
+                    Set<Integer> costs,
+            @RequestParam(required = false, name = "power")
+            @Parameter(name = "power",
+                    description = "Power value of the card. You can put multiple values")
+                    Set<Integer> powers,
+            @RequestParam(required = false)
+            @Parameter(name = "keyword",
+                    description = "Keywords which are in the card name or the card description. You can prefix them with \"!\" " +
+                            "in order to search cards which don't have this word.")
+                    String keyword,
+            HttpServletRequest request) {
+        return cardService.list(pageable,
+                productsId,
+                costs,
+                powers,
+                keyword,
+                languageResolver.resolveLocale(request).getLanguage());
     }
 
-    @Operation(summary = "Get the list of all the different cards matching criteria")
-    @PostMapping("search")
-    public Page<Card> search(
-            @Parameter(description = "Code of the language of the response")
-            @RequestParam(name = "language", defaultValue = "en") String languageCode,
-            @PageableDefault(size = 25) @SortDefault(sort = "id", direction = Sort.Direction.ASC)
-                    Pageable pageable,
-            @Parameter(description = "Body containing criteria to make the search")
-            @RequestBody CardFilter cardFilter) {
-        return cardService.search(cardFilter, languageCode, pageable);
-    }
 
 }

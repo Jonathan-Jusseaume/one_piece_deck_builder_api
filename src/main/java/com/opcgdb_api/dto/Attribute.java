@@ -1,6 +1,5 @@
 package com.opcgdb_api.dto;
 
-import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.AttributeDescriptionEntity;
 import com.opcgdb_api.entity.AttributeEntity;
 import lombok.Getter;
@@ -17,9 +16,6 @@ public class Attribute {
     private String label;
 
     public Attribute(AttributeEntity attributeEntity, String languageCode) {
-        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
-            languageCode = LanguageCodeEnum.ENGLISH.toString();
-        }
         this.id = attributeEntity.getId();
         for (AttributeDescriptionEntity description : attributeEntity.getDescriptions()) {
             if (description.getLanguageCode().equals(languageCode)) {

@@ -1,6 +1,5 @@
 package com.opcgdb_api.dto;
 
-import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.CardDescriptionEntity;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.entity.CardImageEntity;
@@ -45,9 +44,6 @@ public class Card {
     private List<String> images;
 
     public Card(CardEntity cardEntity, String languageCode) {
-        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
-            languageCode = LanguageCodeEnum.ENGLISH.toString();
-        }
         this.id = cardEntity.getId();
         this.type = new Type(cardEntity.getType(), languageCode);
         this.product = new Product(cardEntity.getProduct(), languageCode);
@@ -60,14 +56,13 @@ public class Card {
         this.life = cardEntity.getLife();
         this.images = cardEntity.getImages().stream().map(CardImageEntity::getName).sorted().collect(Collectors.toList());
         this.power = cardEntity.getPower();
-        String finalLanguageCode = languageCode;
         this.colors = cardEntity.getColors()
                 .stream()
-                .map(colorEntity -> new Color(colorEntity, finalLanguageCode))
+                .map(colorEntity -> new Color(colorEntity, languageCode))
                 .collect(Collectors.toList());
         this.tags = cardEntity.getTags()
                 .stream()
-                .map(tagEntity -> new Tag(tagEntity, finalLanguageCode))
+                .map(tagEntity -> new Tag(tagEntity, languageCode))
                 .collect(Collectors.toList());
         for (CardDescriptionEntity description : cardEntity.getDescriptions()) {
             if (description.getLanguageCode().equals(languageCode)) {

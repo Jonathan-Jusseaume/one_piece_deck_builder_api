@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,30 +21,26 @@ public class CardService {
 
     private final CardDao cardDao;
 
-    public List<Card> list(String languageCode) {
-        return cardDao.findAll()
-                .stream()
-                .map(cardEntity -> new Card(cardEntity, languageCode))
-                .collect(Collectors.toList());
-    }
-
-    public Page<Card> search(CardFilter cardFilter, String languageCode, Pageable pageable) {
+    public Page<Card> list(Pageable pageable,
+                           Set<String> productsId,
+                           Set<Integer> costs,
+                           Set<Integer> powers,
+                           String keyword,
+                           String languageCode) {
         if (pageable == null) {
             pageable = Pageable.ofSize(25);
         }
-
         SpecificationBuilder<CardEntity> builder = new SpecificationBuilder<>();
         builder.with(CardSpecification.distinct());
-        addTypesToFilter(builder, cardFilter);
+      /*  addTypesToFilter(builder, cardFilter);
         addColorsToFilter(builder, cardFilter);
         addTagsToFilter(builder, cardFilter);
-        addRaritiesToFilter(builder, cardFilter);
-        addProductsToFilter(builder, cardFilter);
-        addCostsToFilter(builder, cardFilter);
-        addPowersToFilter(builder, cardFilter);
-        addKeywordToFilter(builder, cardFilter);
+        addRaritiesToFilter(builder, cardFilter); */
+        addProductsToFilter(builder, productsId);
+        addCostsToFilter(builder, costs);
+        addPowersToFilter(builder, powers);
+        addKeywordToFilter(builder, keyword);
         Page<CardEntity> results = cardDao.findAll(builder.build(), pageable);
-
         return new PageImpl<>(
                 results.getContent()
                         .stream()
@@ -53,29 +49,27 @@ public class CardService {
                 pageable, results.getTotalElements());
     }
 
-    private void addKeywordToFilter(SpecificationBuilder<CardEntity> builder, CardFilter cardFilter) {
-        if (cardFilter.getKeyword() != null && !cardFilter.getKeyword().isEmpty()) {
-            builder.with(CardSpecification.byKeyword(cardFilter.getKeyword()));
+    private void addKeywordToFilter(SpecificationBuilder<CardEntity> builder, String keyword) {
+        if (keyword != null && !keyword.isEmpty()) {
+            builder.with(CardSpecification.byKeyword(keyword));
         }
     }
 
-    private void addPowersToFilter(SpecificationBuilder<CardEntity> builder, CardFilter cardFilter) {
-        if (cardFilter.getPowers() != null && !cardFilter.getPowers().isEmpty()) {
-            builder.with(CardSpecification.byPower(cardFilter.getPowers()));
+    private void addPowersToFilter(SpecificationBuilder<CardEntity> builder, Set<Integer> powers) {
+        if (powers != null && !powers.isEmpty()) {
+            builder.with(CardSpecification.byPower(powers));
         }
     }
 
-    private void addCostsToFilter(SpecificationBuilder<CardEntity> builder, CardFilter cardFilter) {
-        if (cardFilter.getCosts() != null && !cardFilter.getCosts().isEmpty()) {
-            builder.with(CardSpecification.byCost(cardFilter.getCosts()));
+    private void addCostsToFilter(SpecificationBuilder<CardEntity> builder, Set<Integer> costs) {
+        if (costs != null && !costs.isEmpty()) {
+            builder.with(CardSpecification.byCost(costs));
         }
     }
 
-    private void addProductsToFilter(SpecificationBuilder<CardEntity> builder, CardFilter cardFilter) {
-        if (cardFilter.getProducts() != null && !cardFilter.getProducts().isEmpty()) {
-            builder.with(CardSpecification.byProductId(cardFilter.getProducts()
-                    .stream().map(Product::getId)
-                    .collect(Collectors.toSet())));
+    private void addProductsToFilter(SpecificationBuilder<CardEntity> builder, Set<String> productsId) {
+        if (productsId != null && !productsId.isEmpty()) {
+            builder.with(CardSpecification.byProductId(productsId));
         }
     }
 

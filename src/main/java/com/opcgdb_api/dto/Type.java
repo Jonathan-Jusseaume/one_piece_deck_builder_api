@@ -1,6 +1,5 @@
 package com.opcgdb_api.dto;
 
-import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.entity.TypeDescriptionEntity;
 import com.opcgdb_api.entity.TypeEntity;
 import lombok.Getter;
@@ -19,9 +18,6 @@ public class Type {
     private String label;
 
     public Type(TypeEntity typeEntity, String languageCode) {
-        if (LanguageCodeEnum.languageIsNotAvailable(languageCode)) {
-            languageCode = LanguageCodeEnum.ENGLISH.toString();
-        }
         this.id = typeEntity.getId();
         for (TypeDescriptionEntity description : typeEntity.getDescriptions()) {
             if (description.getLanguageCode().equals(languageCode)) {
