@@ -1,8 +1,7 @@
 package com.opcgdb_api.service;
 
-import com.opcgdb_api.dto.*;
+import com.opcgdb_api.dto.Card;
 import com.opcgdb_api.entity.CardEntity;
-import com.opcgdb_api.model.CardFilter;
 import com.opcgdb_api.repository.CardDao;
 import com.opcgdb_api.repository.specification.CardSpecification;
 import com.opcgdb_api.repository.specification.SpecificationBuilder;
@@ -22,6 +21,10 @@ public class CardService {
     private final CardDao cardDao;
 
     public Page<Card> list(Pageable pageable,
+                           Set<Long> typesId,
+                           Set<Long> colorsId,
+                           Set<Long> tagsId,
+                           Set<Long> raritiesId,
                            Set<String> productsId,
                            Set<Integer> costs,
                            Set<Integer> powers,
@@ -32,10 +35,10 @@ public class CardService {
         }
         SpecificationBuilder<CardEntity> builder = new SpecificationBuilder<>();
         builder.with(CardSpecification.distinct());
-      /*  addTypesToFilter(builder, cardFilter);
-        addColorsToFilter(builder, cardFilter);
-        addTagsToFilter(builder, cardFilter);
-        addRaritiesToFilter(builder, cardFilter); */
+        addTypesToFilter(builder, typesId);
+        addColorsToFilter(builder, colorsId);
+        addTagsToFilter(builder, tagsId);
+        addRaritiesToFilter(builder, raritiesId);
         addProductsToFilter(builder, productsId);
         addCostsToFilter(builder, costs);
         addPowersToFilter(builder, powers);
@@ -73,36 +76,28 @@ public class CardService {
         }
     }
 
-    private void addRaritiesToFilter(SpecificationBuilder<CardEntity> builder, CardFilter cardFilter) {
-        if (cardFilter.getRarities() != null && !cardFilter.getRarities().isEmpty()) {
-            builder.with(CardSpecification.byRarity(cardFilter.getRarities()
-                    .stream().map(Rarity::getId)
-                    .collect(Collectors.toSet())));
+    private void addRaritiesToFilter(SpecificationBuilder<CardEntity> builder, Set<Long> raritiesId) {
+        if (raritiesId != null && !raritiesId.isEmpty()) {
+            builder.with(CardSpecification.byRarity(raritiesId));
         }
     }
 
-    private void addTagsToFilter(SpecificationBuilder<CardEntity> builder, CardFilter cardFilter) {
-        if (cardFilter.getTags() != null && !cardFilter.getTags().isEmpty()) {
-            builder.with(CardSpecification.byTagId(cardFilter.getTags()
-                    .stream().map(Tag::getId)
-                    .collect(Collectors.toSet())));
+    private void addTagsToFilter(SpecificationBuilder<CardEntity> builder, Set<Long> tagsId) {
+        if (tagsId != null && !tagsId.isEmpty()) {
+            builder.with(CardSpecification.byTagId(tagsId));
         }
     }
 
-    private void addColorsToFilter(SpecificationBuilder<CardEntity> builder, CardFilter cardFilter) {
-        if (cardFilter.getColors() != null && !cardFilter.getColors().isEmpty()) {
-            builder.with(CardSpecification.byColorId(cardFilter.getColors()
-                    .stream().map(Color::getId)
-                    .collect(Collectors.toSet())));
+    private void addColorsToFilter(SpecificationBuilder<CardEntity> builder, Set<Long> colorsId) {
+        if (colorsId != null && !colorsId.isEmpty()) {
+            builder.with(CardSpecification.byColorId(colorsId));
         }
     }
 
     private void addTypesToFilter(SpecificationBuilder<CardEntity> builder,
-                                  CardFilter cardFilter) {
-        if (cardFilter.getTypes() != null && !cardFilter.getTypes().isEmpty()) {
-            builder.with(CardSpecification.byTypeId(cardFilter.getTypes()
-                    .stream().map(Type::getId)
-                    .collect(Collectors.toSet())));
+                                  Set<Long> typesId) {
+        if (typesId != null && !typesId.isEmpty()) {
+            builder.with(CardSpecification.byTypeId(typesId));
         }
     }
 

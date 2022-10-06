@@ -32,6 +32,22 @@ public class CardController {
             @PageableDefault(size = 25)
             @SortDefault(sort = "id", direction = Sort.Direction.ASC)
                     Pageable pageable,
+            @RequestParam(required = false, name = "typeId")
+            @Parameter(name = "typeId",
+                    description = "Type Id of the card. You can put multiple values")
+                    Set<Long> typesId,
+            @RequestParam(required = false, name = "colorId")
+            @Parameter(name = "colorId",
+                    description = "Color Id of the card. You can put multiple values")
+                    Set<Long> colorId,
+            @RequestParam(required = false, name = "tagId")
+            @Parameter(name = "tagId",
+                    description = "Tag Id of the card. You can put multiple values")
+                    Set<Long> tagsId,
+            @RequestParam(required = false, name = "rarityId")
+            @Parameter(name = "rarityId",
+                    description = "Rarity Id of the card. You can put multiple values")
+                    Set<Long> raritiesId,
             @RequestParam(required = false, name = "productId")
             @Parameter(name = "productId",
                     description = "Product Id of the card. You can put multiple values")
@@ -51,6 +67,10 @@ public class CardController {
                     String keyword,
             HttpServletRequest request) {
         return cardService.list(pageable,
+                typesId,
+                colorId,
+                tagsId,
+                raritiesId,
                 productsId,
                 costs,
                 powers,
