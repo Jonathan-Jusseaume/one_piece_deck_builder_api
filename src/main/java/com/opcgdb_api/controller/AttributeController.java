@@ -5,13 +5,13 @@ import com.opcgdb_api.dto.Attribute;
 import com.opcgdb_api.service.AttributeService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -27,6 +27,18 @@ public class AttributeController {
     @GetMapping
     public List<Attribute> list(HttpServletRequest request) {
         return attributeService.list(languageResolver.resolveLocale(request).getLanguage());
+    }
+
+    @Operation(summary = "Get the Attribute with the specified ID")
+    @GetMapping("{attributeId}")
+    public Attribute read(@PathVariable(name = "attributeId") Long attributeId,
+                          HttpServletRequest request) {
+        Attribute attribute = attributeService.read(attributeId,
+                languageResolver.resolveLocale(request).getLanguage());
+        if (attribute == null) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Attribute with the specified ID not found");
+        }
+        return attribute;
     }
 
 }
