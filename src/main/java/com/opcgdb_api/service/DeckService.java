@@ -4,11 +4,18 @@ import com.opcgdb_api.dto.Card;
 import com.opcgdb_api.dto.Deck;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.entity.ColorEntity;
+import com.opcgdb_api.entity.DeckEntity;
 import com.opcgdb_api.entity.UserEntity;
 import com.opcgdb_api.repository.CardDao;
 import com.opcgdb_api.repository.DeckDao;
 import com.opcgdb_api.repository.UserDao;
+import com.opcgdb_api.repository.specification.CardSpecification;
+import com.opcgdb_api.repository.specification.DeckSpecification;
+import com.opcgdb_api.repository.specification.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.security.InvalidParameterException;
@@ -25,6 +32,22 @@ public class DeckService {
     private final UserDao userDao;
 
     private final CardDao cardDao;
+
+    public Page<Deck> list(Pageable pageable, String mail, String language) {
+        if (pageable == null) {
+            pageable = Pageable.ofSize(25);
+        }
+        SpecificationBuilder<DeckEntity> builder = new SpecificationBuilder<>();
+        builder.with(DeckSpecification.distinct());
+        addMailToFilter(builder, mail);
+        Page<DeckEntity> results = deckDao.findAll(builder.build(), pageable);
+        return new PageImpl<>(
+                results.getContent()
+                        .stream()
+                        .map(cardEntity -> new Deck(cardEntity, language))
+                        .collect(Collectors.toList()),
+                pageable, results.getTotalElements());
+    }
 
     public Deck create(Deck deck, String language) throws InvalidParameterException {
         Optional<UserEntity> userEntity = userDao.findById(deck.getUser().getMail());
@@ -93,6 +116,13 @@ public class DeckService {
                                 .map(ColorEntity::getId)
                                 .anyMatch(colorId -> color.getId().equals(colorId)));
     }
+
+    private void addMailToFilter(SpecificationBuilder<DeckEntity> builder, String mail) {
+        if (mail != null && !mail.isEmpty()) {
+            builder.with(DeckSpecification.byUserMail(mail));
+        }
+    }
+
 
 
 }
