@@ -4,11 +4,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -19,13 +19,22 @@ public class DeckEntity {
 
     @Id
     @Column(name = "ID", nullable = false)
-    private String id;
+    private UUID id;
 
-    @Column(name = "USER_MAIL")
-    private String userMail;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "LEADER_ID")
+    private CardEntity leader;
 
-    @Column(name = "LEADER_ID")
-    private String leaderId;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "USER_MAIL")
+    private UserEntity user;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "UT_DECK_CARD",
+            joinColumns = @JoinColumn(name = "DECK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "CARD_ID")
+    )
+    private List<CardEntity> cards;
 
     @Column(name = "NAME")
     private String name;

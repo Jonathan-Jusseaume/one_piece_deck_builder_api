@@ -4,6 +4,7 @@ import com.opcgdb_api.entity.CardDescriptionEntity;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.entity.CardImageEntity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Accessors(chain = true)
+@NoArgsConstructor
 public class Card {
 
     private String id;

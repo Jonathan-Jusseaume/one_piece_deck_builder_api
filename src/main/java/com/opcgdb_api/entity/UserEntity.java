@@ -24,4 +24,7 @@ public class UserEntity {
     @Column(name = "JOIN_DATE")
     private Date joinDate;
 
+    @Column(name = "PROFILE_PICTURE")
+    private String profilePicture;
+
 }
