@@ -1,15 +1,12 @@
 package com.opcgdb_api.config;
 
 
-import com.opcgdb_api.constant.LanguageCodeEnum;
 import com.opcgdb_api.dto.User;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
-import java.util.Locale;
 
 @Configuration
 public class UserResolver {

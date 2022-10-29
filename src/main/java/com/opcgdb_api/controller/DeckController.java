@@ -13,11 +13,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.data.web.SortDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.InvalidParameterException;
-import java.util.Set;
+import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -31,7 +32,7 @@ public class DeckController {
 
     private final DeckService deckService;
 
-    @Operation(summary = "Create a deck for the User Authenticated")
+    @Operation(summary = "List decks matching filters")
     @GetMapping
     public Page<Deck> list(
             @PageableDefault(size = 25)
@@ -46,13 +47,23 @@ public class DeckController {
         );
     }
 
+    @Operation(summary = "Read the deck with the ID in the path")
+    @GetMapping("{id}")
+    public Deck read(
+            @Parameter(description = "ID of the deck")
+            @PathVariable UUID id,
+            HttpServletRequest request) throws ResponseStatusException {
+        return deckService.read(id, languageResolver.resolveLocale(request).getLanguage());
+    }
+
+
     @Operation(summary = "Create a deck for the User Authenticated")
     @PostMapping
-    public Deck create(@RequestBody Deck deck, HttpServletRequest request) throws InvalidParameterException {
+    public Deck create(@RequestBody Deck deck, HttpServletRequest request) throws ResponseStatusException {
         User connectedUser = userResolver.resolveUserFromRequest(request);
         if (connectedUser == null || connectedUser.getMail() == null
                 || connectedUser.getMail().isEmpty()) {
-            throw new InvalidParameterException("Token invalid");
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalid");
         }
         deck.setUser(connectedUser);
         return deckService.create(deck, languageResolver.resolveLocale(request).getLanguage());

@@ -1,7 +1,6 @@
 package com.opcgdb_api.dto;
 
 import com.opcgdb_api.entity.CardEntity;
-import com.opcgdb_api.entity.ColorDescriptionEntity;
 import com.opcgdb_api.entity.DeckEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,7 +30,7 @@ public class Deck {
 
     private User user;
 
-    public Date creationDate;
+    private Date creationDate;
 
     public Deck(DeckEntity deckEntity, String languageCode) {
         this.id = deckEntity.getId();
@@ -41,6 +40,7 @@ public class Deck {
         this.leader = new Card(deckEntity.getLeader(), languageCode);
         this.user = new User(deckEntity.getUser());
         this.name = deckEntity.getName();
+        this.creationDate = deckEntity.getCreationDate();
         this.description = deckEntity.getDescription();
     }
 

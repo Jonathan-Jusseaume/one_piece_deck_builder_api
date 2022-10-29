@@ -9,14 +9,15 @@ import com.opcgdb_api.entity.UserEntity;
 import com.opcgdb_api.repository.CardDao;
 import com.opcgdb_api.repository.DeckDao;
 import com.opcgdb_api.repository.UserDao;
-import com.opcgdb_api.repository.specification.CardSpecification;
 import com.opcgdb_api.repository.specification.DeckSpecification;
 import com.opcgdb_api.repository.specification.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.InvalidParameterException;
 import java.sql.Date;
@@ -49,11 +50,19 @@ public class DeckService {
                 pageable, results.getTotalElements());
     }
 
+    public Deck read(UUID id, String language) throws ResponseStatusException {
+        Optional<DeckEntity> deckEntity = deckDao.findById(id);
+        if (deckEntity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Deck with the given id doesn't exist");
+        }
+        return new Deck(deckEntity.get(), language);
+    }
+
     public Deck create(Deck deck, String language) throws InvalidParameterException {
         Optional<UserEntity> userEntity = userDao.findById(deck.getUser().getMail());
         userEntity.ifPresent(entity -> deck.getUser().setCreationDate(entity.getJoinDate()));
         if (!isDeckValid(deck)) {
-            throw new InvalidParameterException("Deck is not valid");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deck is not valid");
         }
         deck.setId(UUID.randomUUID());
         deck.setCreationDate(new Date(Calendar.getInstance().getTime().getTime()));
@@ -61,7 +70,8 @@ public class DeckService {
     }
 
     private boolean isDeckValid(Deck deck) {
-        if (deck.getLeader() == null || deck.getLeader().getId() == null) {
+        if (deck.getLeader() == null || deck.getLeader().getId() == null || deck.getName() == null
+                || deck.getName().isEmpty()) {
             return false;
         }
         Optional<CardEntity> leaderEntityOptional = cardDao.findById(deck.getLeader().getId());
@@ -122,7 +132,6 @@ public class DeckService {
             builder.with(DeckSpecification.byUserMail(mail));
         }
     }
-
 
 
 }

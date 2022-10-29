@@ -7,7 +7,6 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter

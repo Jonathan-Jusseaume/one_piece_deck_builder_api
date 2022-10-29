@@ -1,11 +1,7 @@
 package com.opcgdb_api.repository.specification;
 
-import com.opcgdb_api.entity.*;
+import com.opcgdb_api.entity.DeckEntity;
 import org.springframework.data.jpa.domain.Specification;
-
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.SetJoin;
-import java.util.Set;
 
 public class DeckSpecification {
 
