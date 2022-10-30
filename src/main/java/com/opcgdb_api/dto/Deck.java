@@ -1,5 +1,6 @@
 package com.opcgdb_api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.entity.DeckEntity;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Deck {
 
     private String description;
 
+    @JsonIgnore
     private User user;
 
     private Date creationDate;
@@ -38,7 +40,6 @@ public class Deck {
                 .map(cardEntity -> new Card(cardEntity, languageCode))
                 .collect(Collectors.toList());
         this.leader = new Card(deckEntity.getLeader(), languageCode);
-        this.user = new User(deckEntity.getUser());
         this.name = deckEntity.getName();
         this.creationDate = deckEntity.getCreationDate();
         this.description = deckEntity.getDescription();

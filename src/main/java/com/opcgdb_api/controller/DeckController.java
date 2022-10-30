@@ -38,10 +38,12 @@ public class DeckController {
             @PageableDefault(size = 25)
             @SortDefault(sort = "creationDate", direction = Sort.Direction.DESC)
                     Pageable pageable,
-            @RequestParam(required = false)
-            @Parameter(description = "Mail of the creator of the deck")
-                    String mail,
             HttpServletRequest request) {
+        User connectedUser = userResolver.resolveUserFromRequest(request);
+        String mail = null;
+        if (connectedUser != null && connectedUser.getMail() != null) {
+            mail = connectedUser.getMail();
+        }
         return deckService.list(
                 pageable, mail, languageResolver.resolveLocale(request).getLanguage()
         );
