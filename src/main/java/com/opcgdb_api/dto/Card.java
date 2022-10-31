@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -21,7 +22,7 @@ public class Card {
 
     private Type type;
 
-    private Product product;
+    private Set<Product> products;
 
     private List<Color> colors;
 
@@ -48,7 +49,10 @@ public class Card {
     public Card(CardEntity cardEntity, String languageCode) {
         this.id = cardEntity.getId();
         this.type = new Type(cardEntity.getType(), languageCode);
-        this.product = new Product(cardEntity.getProduct(), languageCode);
+        this.products = cardEntity.getProducts()
+                .stream()
+                .map(productEntity -> new Product(productEntity, languageCode))
+                .collect(Collectors.toSet());
         this.rarity = new Rarity(cardEntity.getRarity());
         if (cardEntity.getAttribute() != null) {
             this.attribute = new Attribute(cardEntity.getAttribute(), languageCode);

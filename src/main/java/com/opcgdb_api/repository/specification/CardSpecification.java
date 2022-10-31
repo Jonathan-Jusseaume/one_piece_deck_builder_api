@@ -1,9 +1,6 @@
 package com.opcgdb_api.repository.specification;
 
-import com.opcgdb_api.entity.CardDescriptionEntity;
-import com.opcgdb_api.entity.CardEntity;
-import com.opcgdb_api.entity.ColorEntity;
-import com.opcgdb_api.entity.TagEntity;
+import com.opcgdb_api.entity.*;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
@@ -98,7 +95,9 @@ public class CardSpecification {
     }
 
     public static Specification<CardEntity> byProductId(Set<String> productsId) {
-        return ((root, criteriaQuery, criteriaBuilder) ->
-                criteriaBuilder.in(root.get("product").get("id")).value(productsId));
+        return ((root, criteriaQuery, criteriaBuilder) -> {
+            SetJoin<CardEntity, ProductEntity> join = root.joinSet("products");
+            return join.get("id").in(productsId);
+        });
     }
 }

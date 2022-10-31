@@ -22,9 +22,12 @@ public class CardEntity {
     @JoinColumn(name = "TYPE_ID")
     private TypeEntity type;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "PRODUCT_ID")
-    private ProductEntity product;
+    @ManyToMany
+    @JoinTable(name = "UT_CARD_PRODUCT",
+            joinColumns = @JoinColumn(name = "CARD_ID"),
+            inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID")
+    )
+    private Set<ProductEntity> products;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RARITY_ID")
