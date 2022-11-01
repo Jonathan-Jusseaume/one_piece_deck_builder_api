@@ -24,7 +24,7 @@ public class DeckEntity {
     @JoinColumn(name = "LEADER_ID")
     private CardEntity leader;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "USER_MAIL")
     private UserEntity user;
 

@@ -2,6 +2,7 @@ package com.opcgdb_api.service;
 
 import com.opcgdb_api.dto.Card;
 import com.opcgdb_api.dto.Deck;
+import com.opcgdb_api.dto.User;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.entity.ColorEntity;
 import com.opcgdb_api.entity.DeckEntity;
@@ -9,7 +10,6 @@ import com.opcgdb_api.entity.UserEntity;
 import com.opcgdb_api.repository.CardDao;
 import com.opcgdb_api.repository.DeckDao;
 import com.opcgdb_api.repository.UserDao;
-import com.opcgdb_api.repository.specification.CardSpecification;
 import com.opcgdb_api.repository.specification.DeckSpecification;
 import com.opcgdb_api.repository.specification.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
@@ -62,14 +62,29 @@ public class DeckService {
     }
 
     public Deck create(Deck deck, String language) throws InvalidParameterException {
-        Optional<UserEntity> userEntity = userDao.findById(deck.getUser().getMail());
-        userEntity.ifPresent(entity -> deck.getUser().setCreationDate(entity.getJoinDate()));
+        Optional<UserEntity> optionalUserEntity = userDao.findById(deck.getUser().getMail());
+
+
         if (!isDeckValid(deck)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deck is not valid");
         }
+
+        UserEntity userToSave = optionalUserEntity.orElseGet(() -> userDao.saveAndFlush(deck.getUser().toEntity()));
         deck.setId(UUID.randomUUID());
+        deck.setUser(new User(userToSave));
         deck.setCreationDate(new Date(Calendar.getInstance().getTime().getTime()));
         return new Deck(deckDao.save(deck.toEntity()), language);
+    }
+
+    public void delete(UUID id, String mail) throws ResponseStatusException {
+        Optional<DeckEntity> deckEntity = deckDao.findById(id);
+        if (deckEntity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Deck with the given id doesn't exist");
+        }
+        if (!deckEntity.get().getUser().getMail().equals(mail)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This is not your deck");
+        }
+        this.deckDao.deleteById(id);
     }
 
     private boolean isDeckValid(Deck deck) {

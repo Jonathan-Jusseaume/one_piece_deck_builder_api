@@ -80,4 +80,18 @@ public class DeckController {
         return deckService.create(deck, languageResolver.resolveLocale(request).getLanguage());
     }
 
+    @Operation(summary = "Delete the deck with the id in the path. You need to be the owner of the deck")
+    @DeleteMapping("{id}")
+    public void delete(
+            @Parameter(description = "ID of the deck")
+            @PathVariable UUID id,
+            HttpServletRequest request) throws ResponseStatusException {
+        User connectedUser = userResolver.resolveUserFromRequest(request);
+        String mail = null;
+        if (connectedUser != null && connectedUser.getMail() != null) {
+            mail = connectedUser.getMail();
+        }
+        deckService.delete(id, mail);
+    }
+
 }

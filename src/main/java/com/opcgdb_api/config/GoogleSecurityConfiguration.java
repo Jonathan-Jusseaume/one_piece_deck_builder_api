@@ -19,6 +19,7 @@ public class GoogleSecurityConfiguration {
                 .and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.POST, "/api/decks").fullyAuthenticated()
+                .antMatchers(HttpMethod.DELETE, "/api/decks/**").fullyAuthenticated()
                 .antMatchers("/**").permitAll()
                 .and()
                 .oauth2ResourceServer().jwt()
