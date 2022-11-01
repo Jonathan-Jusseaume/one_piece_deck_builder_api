@@ -9,6 +9,7 @@ import com.opcgdb_api.entity.UserEntity;
 import com.opcgdb_api.repository.CardDao;
 import com.opcgdb_api.repository.DeckDao;
 import com.opcgdb_api.repository.UserDao;
+import com.opcgdb_api.repository.specification.CardSpecification;
 import com.opcgdb_api.repository.specification.DeckSpecification;
 import com.opcgdb_api.repository.specification.SpecificationBuilder;
 import lombok.RequiredArgsConstructor;
@@ -34,13 +35,15 @@ public class DeckService {
 
     private final CardDao cardDao;
 
-    public Page<Deck> list(Pageable pageable, String mail, String language) {
+    public Page<Deck> list(Pageable pageable, String mail, Set<Long> colorsId, String keyword, String language) {
         if (pageable == null) {
             pageable = Pageable.ofSize(25);
         }
         SpecificationBuilder<DeckEntity> builder = new SpecificationBuilder<>();
         builder.with(DeckSpecification.distinct());
         addMailToFilter(builder, mail);
+        addColorsToFilter(builder, colorsId);
+        addKeywordToFilter(builder, keyword);
         Page<DeckEntity> results = deckDao.findAll(builder.build(), pageable);
         return new PageImpl<>(
                 results.getContent()
@@ -130,6 +133,18 @@ public class DeckService {
     private void addMailToFilter(SpecificationBuilder<DeckEntity> builder, String mail) {
         if (mail != null && !mail.isEmpty()) {
             builder.with(DeckSpecification.byUserMail(mail));
+        }
+    }
+
+    private void addKeywordToFilter(SpecificationBuilder<DeckEntity> builder, String keyword) {
+        if (keyword != null && !keyword.isEmpty()) {
+            builder.with(DeckSpecification.byKeyword(keyword));
+        }
+    }
+
+    private void addColorsToFilter(SpecificationBuilder<DeckEntity> builder, Set<Long> colorsId) {
+        if (colorsId != null && !colorsId.isEmpty()) {
+            builder.with(DeckSpecification.byColorId(colorsId));
         }
     }
 

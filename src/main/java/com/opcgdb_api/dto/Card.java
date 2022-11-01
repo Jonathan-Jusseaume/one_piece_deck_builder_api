@@ -69,6 +69,7 @@ public class Card {
         this.tags = cardEntity.getTags()
                 .stream()
                 .map(tagEntity -> new Tag(tagEntity, languageCode))
+                .sorted()
                 .collect(Collectors.toList());
         for (CardDescriptionEntity description : cardEntity.getDescriptions()) {
             if (description.getLanguageCode().equals(languageCode)) {

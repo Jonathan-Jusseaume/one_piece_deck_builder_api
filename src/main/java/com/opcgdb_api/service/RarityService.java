@@ -18,6 +18,7 @@ public class RarityService {
         return rarityDao.findAll()
                 .stream()
                 .map(Rarity::new)
+                .sorted()
                 .collect(Collectors.toList());
     }
 

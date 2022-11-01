@@ -18,6 +18,7 @@ public class TagService {
         return tagDao.findAll()
                 .stream()
                 .map(tagEntity -> new Tag(tagEntity, languageCode))
+                .sorted()
                 .collect(Collectors.toList());
     }
 

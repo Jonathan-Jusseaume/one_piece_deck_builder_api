@@ -14,6 +14,10 @@ public class UserResolver {
     public User resolveUserFromRequest(HttpServletRequest request) {
 
         String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader == null) {
+            return null;
+        }
+
         String[] splitAuthorizationHeader = authorizationHeader.split(" ");
         if (splitAuthorizationHeader.length != 2) {
             return null;

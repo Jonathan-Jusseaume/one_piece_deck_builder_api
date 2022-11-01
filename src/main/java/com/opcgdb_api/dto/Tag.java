@@ -13,7 +13,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonDeserialize
 @NoArgsConstructor
-public class Tag {
+public class Tag implements Comparable {
 
     private Long id;
 
@@ -27,5 +27,13 @@ public class Tag {
                 break;
             }
         }
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (!(o instanceof Tag)) {
+            return -1;
+        }
+        return this.getLabel().compareTo(((Tag) o).getLabel());
     }
 }

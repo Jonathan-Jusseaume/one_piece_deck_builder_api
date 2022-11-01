@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -37,7 +38,15 @@ public class DeckController {
     public Page<Deck> list(
             @PageableDefault(size = 25)
             @SortDefault(sort = "creationDate", direction = Sort.Direction.DESC)
-                    Pageable pageable,
+            Pageable pageable,
+            @RequestParam(required = false, name = "colorId")
+            @Parameter(name = "colorId",
+                    description = "Color Id of the leader of the deck. You can put multiple values")
+            Set<Long> colorId,
+            @Parameter(name = "keyword",
+                    description = "Keywords which are in the deck name or the deck description. You can prefix them with \"!\" " +
+                            "in order to search deck which don't have this word.")
+            String keyword,
             HttpServletRequest request) {
         User connectedUser = userResolver.resolveUserFromRequest(request);
         String mail = null;
@@ -45,7 +54,7 @@ public class DeckController {
             mail = connectedUser.getMail();
         }
         return deckService.list(
-                pageable, mail, languageResolver.resolveLocale(request).getLanguage()
+                pageable, mail, colorId, keyword, languageResolver.resolveLocale(request).getLanguage()
         );
     }
 
