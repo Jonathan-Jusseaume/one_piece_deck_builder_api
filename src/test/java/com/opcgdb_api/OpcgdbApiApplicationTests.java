@@ -8,6 +8,7 @@ class OpcgdbApiApplicationTests {
 
     @Test
     void contextLoads() {
+        assert true == true;
     }
 
 }
