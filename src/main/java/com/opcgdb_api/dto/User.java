@@ -21,12 +21,15 @@ public class User {
     private String profilePicture;
 
     public User(UserEntity userEntity) {
-        this.mail = userEntity.getMail();
-        this.creationDate = userEntity.getJoinDate();
-        this.profilePicture = userEntity.getProfilePicture();
+        this.setMail(userEntity.getMail());
+        this.setCreationDate(userEntity.getJoinDate());
+        this.setProfilePicture(userEntity.getProfilePicture());
     }
 
     public UserEntity toEntity() {
-        return new UserEntity().setJoinDate(creationDate).setMail(mail).setProfilePicture(profilePicture);
+        return new UserEntity()
+                .setJoinDate(creationDate)
+                .setMail(mail)
+                .setProfilePicture(profilePicture);
     }
 }

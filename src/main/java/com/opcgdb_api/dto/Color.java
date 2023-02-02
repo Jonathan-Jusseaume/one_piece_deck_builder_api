@@ -18,12 +18,12 @@ public class Color {
     private String label;
 
     public Color(ColorEntity colorEntity, String languageCode) {
-        this.id = colorEntity.getId();
-        for (ColorDescriptionEntity description : colorEntity.getDescriptions()) {
-            if (description.getLanguageCode().equals(languageCode)) {
-                this.label = description.getName();
-                break;
-            }
-        }
+        this.setId(colorEntity.getId());
+        this.setLabel(colorEntity.getDescriptions()
+                .stream()
+                .filter(description -> description.getLanguageCode().equals(languageCode))
+                .map(ColorDescriptionEntity::getName)
+                .findFirst()
+                .orElse(""));
     }
 }

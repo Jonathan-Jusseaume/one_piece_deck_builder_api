@@ -18,12 +18,12 @@ public class Attribute {
     private String label;
 
     public Attribute(AttributeEntity attributeEntity, String languageCode) {
-        this.id = attributeEntity.getId();
-        for (AttributeDescriptionEntity description : attributeEntity.getDescriptions()) {
-            if (description.getLanguageCode().equals(languageCode)) {
-                this.label = description.getName();
-                break;
-            }
-        }
+        this.setId(attributeEntity.getId());
+        this.setLabel(attributeEntity.getDescriptions()
+                .stream()
+                .filter(description -> description.getLanguageCode().equals(languageCode))
+                .map(AttributeDescriptionEntity::getName)
+                .findFirst()
+                .orElse(""));
     }
 }
