@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/decks")
+@RequestMapping("/decks")
 @RequiredArgsConstructor
 public class DeckController {
 
@@ -38,15 +38,15 @@ public class DeckController {
     public Page<Deck> list(
             @PageableDefault(size = 25)
             @SortDefault(sort = "creationDate", direction = Sort.Direction.DESC)
-            Pageable pageable,
+                    Pageable pageable,
             @RequestParam(required = false, name = "colorId")
             @Parameter(name = "colorId",
                     description = "Color Id of the leader of the deck. You can put multiple values")
-            Set<Long> colorId,
+                    Set<Long> colorId,
             @Parameter(name = "keyword",
                     description = "Keywords which are in the deck name or the deck description. You can prefix them with \"!\" " +
                             "in order to search deck which don't have this word.")
-            String keyword,
+                    String keyword,
             HttpServletRequest request) {
         User connectedUser = userResolver.resolveUserFromRequest(request);
         String mail = null;

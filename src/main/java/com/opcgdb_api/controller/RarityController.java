@@ -13,7 +13,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping("/api/rarities")
+@RequestMapping("/rarities")
 @RequiredArgsConstructor
 public class RarityController {
 
