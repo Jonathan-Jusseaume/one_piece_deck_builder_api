@@ -1,3 +1,13 @@
+server:
+  port: 8080
+  tomcat:
+    use-relative-redirects: true
+    remote_ip_header: x-forwarded-for
+    protocol_header: x-forwarded-proto
+    internal-proxies: .*
+    forward-headers-strategry: NATIVE
+  servlet:
+    context-path: /api
 spring:
   datasource:
     url: ${DB_URL}
@@ -24,7 +34,5 @@ springdoc:
     path: /api-docs
   swagger-ui:
     operationsSorter: method
-server:
-  servlet:
-    context-path: /api
+
 
