@@ -35,6 +35,13 @@ public class DeckEntity {
     )
     private List<CardEntity> cards;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "UT_DECK_FAVORITE",
+            joinColumns = @JoinColumn(name = "DECK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "USER_MAIL")
+    )
+    private List<UserEntity> usersFavorite;
+
     @Column(name = "NAME")
     private String name;
 
@@ -44,4 +51,15 @@ public class DeckEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "COUNT_FAVORITES")
+    private Integer countFavorites;
+
+    public boolean canLikeDeck(String mail) {
+        if (mail == null) {
+            return false;
+        }
+        return this.getUsersFavorite()
+                .stream()
+                .noneMatch(userEntity1 -> mail.equals(userEntity1.getMail()));
+    }
 }

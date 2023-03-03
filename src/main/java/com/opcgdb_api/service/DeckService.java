@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,7 +38,7 @@ public class DeckService {
 
     private final CardDao cardDao;
 
-    public Page<Deck> list(Pageable pageable, String mail, Set<Long> colorsId, String keyword, String language) {
+    public Page<Deck> list(Pageable pageable, String mail, Set<Long> colorsId, String keyword, User connectedUser, String language) {
         if (pageable == null) {
             pageable = Pageable.ofSize(25);
         }
@@ -46,36 +47,60 @@ public class DeckService {
         addMailToFilter(builder, mail);
         addColorsToFilter(builder, colorsId);
         addKeywordToFilter(builder, keyword);
-        Page<DeckEntity> results = deckDao.findAll(builder.build(), pageable);
+        addOnlyFavoriteToFilter(builder, connectedUser);
+        Page<DeckEntity> results = deckDao.findAll(builder.build(), pageable, Sort.by("countFavorites"));
         return new PageImpl<>(
                 results.getContent()
                         .stream()
-                        .map(cardEntity -> new Deck(cardEntity, language))
+                        .map(cardEntity -> new Deck(cardEntity, language, mail))
                         .collect(Collectors.toList()),
                 pageable, results.getTotalElements());
     }
 
-    public Deck read(UUID id, String language) throws ResponseStatusException {
-        Optional<DeckEntity> deckEntity = deckDao.findById(id);
-        if (deckEntity.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Deck with the given id doesn't exist");
-        }
-        return new Deck(deckEntity.get(), language);
+    public Deck read(UUID id, String language, String mail) throws ResponseStatusException {
+        return new Deck(this.readById(id), language, mail);
     }
 
     public Deck create(Deck deck, String language) throws InvalidParameterException {
-        Optional<UserEntity> optionalUserEntity = userDao.findById(deck.getUser().getMail());
-
-
         if (!isDeckValid(deck)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deck is not valid");
         }
-
-        UserEntity userToSave = optionalUserEntity.orElseGet(() -> userDao.saveAndFlush(deck.getUser().toEntity()));
+        UserEntity userToSave = this.saveUserIfNotExists(deck.getUser());
         deck.setId(UUID.randomUUID());
         deck.setUser(new User(userToSave));
         deck.setCreationDate(new Date(Calendar.getInstance().getTime().getTime()));
-        return new Deck(deckDao.save(deck.toEntity()), language);
+        return new Deck(deckDao.save(deck.toEntity()), language, userToSave.getMail());
+    }
+
+    public Deck favorite(UUID id, User connectedUser, String language) throws ResponseStatusException {
+        return favoriteAction(id, connectedUser, language, true);
+    }
+
+    public Deck unfavorite(UUID id, User connectedUser, String language) {
+        return favoriteAction(id, connectedUser, language, false);
+    }
+
+    private Deck favoriteAction(UUID id, User connectedUser, String language, boolean makeFavorite) throws ResponseStatusException {
+        DeckEntity deckEntity = this.readById(id);
+        UserEntity userToSave = this.saveUserIfNotExists(connectedUser);
+        if (!deckEntity.canLikeDeck(userToSave.getMail()) && makeFavorite) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You have already make this deck as favorite");
+        }
+        if (deckEntity.canLikeDeck(userToSave.getMail()) && !makeFavorite) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You can't unfavorite a deck which is not your favorite");
+        }
+
+        if (makeFavorite) {
+            deckEntity.getUsersFavorite().add(userToSave);
+            deckEntity.setCountFavorites(deckEntity.getCountFavorites() + 1);
+        } else {
+            deckEntity.setUsersFavorite(deckEntity.getUsersFavorite()
+                    .stream()
+                    .filter(userEntity -> !userEntity.getMail().equals(connectedUser.getMail()))
+                    .collect(Collectors.toList()));
+            deckEntity.setCountFavorites(deckEntity.getCountFavorites() - 1);
+        }
+        return new Deck(deckDao.save(deckEntity), language, userToSave.getMail());
     }
 
     public void delete(UUID id, String mail) throws ResponseStatusException {
@@ -87,6 +112,19 @@ public class DeckService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This is not your deck");
         }
         this.deckDao.deleteById(id);
+    }
+
+    private UserEntity saveUserIfNotExists(User user) {
+        Optional<UserEntity> optionalUserEntity = userDao.findById(user.getMail());
+        return optionalUserEntity.orElseGet(() -> userDao.saveAndFlush(user.toEntity()));
+    }
+
+    private DeckEntity readById(UUID id) throws ResponseStatusException {
+        Optional<DeckEntity> deckEntity = deckDao.findById(id);
+        if (deckEntity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Deck with the given id doesn't exist");
+        }
+        return deckEntity.get();
     }
 
     private boolean isDeckValid(Deck deck) {
@@ -162,6 +200,12 @@ public class DeckService {
     private void addColorsToFilter(SpecificationBuilder<DeckEntity> builder, Set<Long> colorsId) {
         if (colorsId != null && !colorsId.isEmpty()) {
             builder.with(DeckSpecification.byColorId(colorsId));
+        }
+    }
+
+    private void addOnlyFavoriteToFilter(SpecificationBuilder<DeckEntity> builder, User connectedUser) {
+        if (connectedUser != null && connectedUser.getMail() != null) {
+            builder.with(DeckSpecification.byUserFavoriteDeck(connectedUser.getMail()));
         }
     }
 

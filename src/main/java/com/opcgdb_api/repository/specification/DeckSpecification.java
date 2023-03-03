@@ -1,9 +1,9 @@
 package com.opcgdb_api.repository.specification;
 
-import com.opcgdb_api.entity.CardDescriptionEntity;
 import com.opcgdb_api.entity.CardEntity;
 import com.opcgdb_api.entity.ColorEntity;
 import com.opcgdb_api.entity.DeckEntity;
+import com.opcgdb_api.entity.UserEntity;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
@@ -67,6 +67,13 @@ public class DeckSpecification {
             Join<DeckEntity, CardEntity> join = root.join("leader");
             SetJoin<CardEntity, ColorEntity> colorsJoin = join.joinSet("colors");
             return colorsJoin.get("id").in(colorsId);
+        });
+    }
+
+    public static Specification<DeckEntity> byUserFavoriteDeck(String mail) {
+        return ((root, criteriaQuery, criteriaBuilder) -> {
+            SetJoin<DeckEntity, UserEntity> join = root.joinSet("usersFavorite");
+            return join.get("mail").in(mail);
         });
     }
 }

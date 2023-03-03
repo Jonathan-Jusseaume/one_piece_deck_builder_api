@@ -42,19 +42,25 @@ public class DeckController {
             @RequestParam(required = false, name = "colorId")
             @Parameter(name = "colorId",
                     description = "Color Id of the leader of the deck. You can put multiple values")
-                    Set<Long> colorId,
+                    Set<Long> colorsId,
+            @RequestParam(required = false)
             @Parameter(name = "keyword",
                     description = "Keywords which are in the deck name or the deck description. You can prefix them with \"!\" " +
                             "in order to search deck which don't have this word.")
                     String keyword,
+            @RequestParam(required = false)
+            @Parameter(name = "onlyFavorite",
+                    description = "If the boolean value is true, it will return only favorite decks of user. You must be logged in, in" +
+                            "order to use this filter.")
+                    boolean onlyFavorite,
             HttpServletRequest request) {
-        User connectedUser = userResolver.resolveUserFromRequest(request);
-        String mail = null;
-        if (connectedUser != null && connectedUser.getMail() != null) {
-            mail = connectedUser.getMail();
+        User connectedUser = null;
+        if (onlyFavorite) {
+            connectedUser = this.getConnectedUser(request);
         }
         return deckService.list(
-                pageable, mail, colorId, keyword, languageResolver.resolveLocale(request).getLanguage()
+                pageable, this.getMailIfUserConnected(request), colorsId, keyword, connectedUser,
+                languageResolver.resolveLocale(request).getLanguage()
         );
     }
 
@@ -64,20 +70,34 @@ public class DeckController {
             @Parameter(description = "ID of the deck")
             @PathVariable UUID id,
             HttpServletRequest request) throws ResponseStatusException {
-        return deckService.read(id, languageResolver.resolveLocale(request).getLanguage());
+        return deckService.read(id, languageResolver.resolveLocale(request).getLanguage(),
+                this.getMailIfUserConnected(request));
     }
 
 
     @Operation(summary = "Create a deck for the User Authenticated")
     @PostMapping
     public Deck create(@RequestBody Deck deck, HttpServletRequest request) throws ResponseStatusException {
-        User connectedUser = userResolver.resolveUserFromRequest(request);
-        if (connectedUser == null || connectedUser.getMail() == null
-                || connectedUser.getMail().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalid");
-        }
+        User connectedUser = getConnectedUser(request);
         deck.setUser(connectedUser);
         return deckService.create(deck, languageResolver.resolveLocale(request).getLanguage());
+    }
+
+
+    @Operation(summary = "Make a deck as favorite for the User Authenticated")
+    @PostMapping("{id}/favorite")
+    public Deck favorite(@Parameter(description = "ID of the deck")
+                         @PathVariable UUID id, HttpServletRequest request) throws ResponseStatusException {
+        User connectedUser = getConnectedUser(request);
+        return deckService.favorite(id, connectedUser, languageResolver.resolveLocale(request).getLanguage());
+    }
+
+    @Operation(summary = "Unfavorite a deck for the User Authenticated")
+    @PostMapping("{id}/unfavorite")
+    public Deck unfavorite(@Parameter(description = "ID of the deck")
+                           @PathVariable UUID id, HttpServletRequest request) throws ResponseStatusException {
+        User connectedUser = getConnectedUser(request);
+        return deckService.unfavorite(id, connectedUser, languageResolver.resolveLocale(request).getLanguage());
     }
 
     @Operation(summary = "Delete the deck with the id in the path. You need to be the owner of the deck")
@@ -86,12 +106,26 @@ public class DeckController {
             @Parameter(description = "ID of the deck")
             @PathVariable UUID id,
             HttpServletRequest request) throws ResponseStatusException {
+        User connectedUser = getConnectedUser(request);
+        deckService.delete(id, connectedUser.getMail());
+    }
+
+    private User getConnectedUser(HttpServletRequest request) throws ResponseStatusException {
+        User connectedUser = userResolver.resolveUserFromRequest(request);
+        if (connectedUser == null || connectedUser.getMail() == null
+                || connectedUser.getMail().isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalid");
+        }
+        return connectedUser;
+    }
+
+    private String getMailIfUserConnected(HttpServletRequest request) {
         User connectedUser = userResolver.resolveUserFromRequest(request);
         String mail = null;
         if (connectedUser != null && connectedUser.getMail() != null) {
             mail = connectedUser.getMail();
         }
-        deckService.delete(id, mail);
+        return mail;
     }
 
 }
