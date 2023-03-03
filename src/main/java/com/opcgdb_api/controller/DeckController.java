@@ -54,12 +54,12 @@ public class DeckController {
                             "order to use this filter.")
                     boolean onlyFavorite,
             HttpServletRequest request) {
-        User connectedUser = null;
-        if (onlyFavorite) {
-            connectedUser = this.getConnectedUser(request);
+        User connectedUser = userResolver.resolveUserFromRequest(request);
+        if (onlyFavorite && connectedUser == null) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalid");
         }
         return deckService.list(
-                pageable, this.getMailIfUserConnected(request), colorsId, keyword, connectedUser,
+                pageable, this.getMailIfUserConnected(request), colorsId, keyword, connectedUser, onlyFavorite,
                 languageResolver.resolveLocale(request).getLanguage()
         );
     }

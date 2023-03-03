@@ -37,7 +37,8 @@ public class DeckService {
 
     private final CardDao cardDao;
 
-    public Page<Deck> list(Pageable pageable, String mail, Set<Long> colorsId, String keyword, User connectedUser, String language) {
+    public Page<Deck> list(Pageable pageable, String mail, Set<Long> colorsId, String keyword, User connectedUser,
+                           boolean onlyFavorite, String language) {
         if (pageable == null) {
             pageable = Pageable.ofSize(25);
         }
@@ -46,7 +47,7 @@ public class DeckService {
         addMailToFilter(builder, mail);
         addColorsToFilter(builder, colorsId);
         addKeywordToFilter(builder, keyword);
-        addOnlyFavoriteToFilter(builder, connectedUser);
+        addOnlyFavoriteToFilter(builder, connectedUser, onlyFavorite);
         Page<DeckEntity> results = deckDao.findAll(builder.build(), pageable);
         return new PageImpl<>(
                 results.getContent()
@@ -202,8 +203,8 @@ public class DeckService {
         }
     }
 
-    private void addOnlyFavoriteToFilter(SpecificationBuilder<DeckEntity> builder, User connectedUser) {
-        if (connectedUser != null && connectedUser.getMail() != null) {
+    private void addOnlyFavoriteToFilter(SpecificationBuilder<DeckEntity> builder, User connectedUser, boolean onlyFavorite) {
+        if (connectedUser != null && connectedUser.getMail() != null && onlyFavorite) {
             builder.with(DeckSpecification.byUserFavoriteDeck(connectedUser.getMail()));
         }
     }
