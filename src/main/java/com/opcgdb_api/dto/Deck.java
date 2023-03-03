@@ -36,7 +36,7 @@ public class Deck {
 
     private Integer countFavorites = 0;
 
-    private boolean canMakeFavorite = false;
+    private boolean isFavorite = false;
 
     public Deck(DeckEntity deckEntity, String languageCode, String mail) {
         this.id = deckEntity.getId();
@@ -48,7 +48,7 @@ public class Deck {
         this.creationDate = deckEntity.getCreationDate();
         this.description = deckEntity.getDescription();
         this.countFavorites = deckEntity.getCountFavorites();
-        this.canMakeFavorite = deckEntity.canLikeDeck(mail);
+        this.isFavorite = deckEntity.isFavorite(mail);
     }
 
     public DeckEntity toEntity() {

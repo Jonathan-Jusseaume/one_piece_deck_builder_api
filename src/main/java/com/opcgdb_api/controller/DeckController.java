@@ -53,13 +53,17 @@ public class DeckController {
                     description = "If the boolean value is true, it will return only favorite decks of user. You must be logged in, in" +
                             "order to use this filter.")
                     boolean onlyFavorite,
+            @RequestParam(required = false)
+            @Parameter(name = "onlyUserDeck",
+                    description = "If the boolean value is true, it will return only the deck created by the user connected")
+            boolean onlyUserDeck,
             HttpServletRequest request) {
         User connectedUser = userResolver.resolveUserFromRequest(request);
-        if (onlyFavorite && connectedUser == null) {
+        if ((onlyFavorite || onlyUserDeck) && connectedUser == null) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token invalid");
         }
         return deckService.list(
-                pageable, this.getMailIfUserConnected(request), colorsId, keyword, connectedUser, onlyFavorite,
+                pageable, onlyUserDeck, colorsId, keyword, connectedUser, onlyFavorite,
                 languageResolver.resolveLocale(request).getLanguage()
         );
     }

@@ -37,14 +37,14 @@ public class DeckService {
 
     private final CardDao cardDao;
 
-    public Page<Deck> list(Pageable pageable, String mail, Set<Long> colorsId, String keyword, User connectedUser,
+    public Page<Deck> list(Pageable pageable, boolean onlyUserDeck, Set<Long> colorsId, String keyword, User connectedUser,
                            boolean onlyFavorite, String language) {
         if (pageable == null) {
             pageable = Pageable.ofSize(25);
         }
         SpecificationBuilder<DeckEntity> builder = new SpecificationBuilder<>();
         builder.with(DeckSpecification.distinct());
-        addMailToFilter(builder, mail);
+        addMailToFilter(builder, connectedUser, onlyUserDeck);
         addColorsToFilter(builder, colorsId);
         addKeywordToFilter(builder, keyword);
         addOnlyFavoriteToFilter(builder, connectedUser, onlyFavorite);
@@ -52,7 +52,8 @@ public class DeckService {
         return new PageImpl<>(
                 results.getContent()
                         .stream()
-                        .map(cardEntity -> new Deck(cardEntity, language, mail))
+                        .map(cardEntity -> new Deck(cardEntity, language,
+                                (connectedUser != null) ? connectedUser.getMail() : null))
                         .collect(Collectors.toList()),
                 pageable, results.getTotalElements());
     }
@@ -83,10 +84,10 @@ public class DeckService {
     private Deck favoriteAction(UUID id, User connectedUser, String language, boolean makeFavorite) throws ResponseStatusException {
         DeckEntity deckEntity = this.readById(id);
         UserEntity userToSave = this.saveUserIfNotExists(connectedUser);
-        if (!deckEntity.canLikeDeck(userToSave.getMail()) && makeFavorite) {
+        if (deckEntity.isFavorite(userToSave.getMail()) && makeFavorite) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You have already make this deck as favorite");
         }
-        if (deckEntity.canLikeDeck(userToSave.getMail()) && !makeFavorite) {
+        if (!deckEntity.isFavorite(userToSave.getMail()) && !makeFavorite) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "You can't unfavorite a deck which is not your favorite");
         }
 
@@ -185,9 +186,9 @@ public class DeckService {
                                 .anyMatch(colorId -> color.getId().equals(colorId)));
     }
 
-    private void addMailToFilter(SpecificationBuilder<DeckEntity> builder, String mail) {
-        if (mail != null && !mail.isEmpty()) {
-            builder.with(DeckSpecification.byUserMail(mail));
+    private void addMailToFilter(SpecificationBuilder<DeckEntity> builder, User userConnected, boolean onlyUserDeck) {
+        if (onlyUserDeck && userConnected != null) {
+            builder.with(DeckSpecification.byUserMail(userConnected.getMail()));
         }
     }
 

@@ -54,12 +54,12 @@ public class DeckEntity {
     @Column(name = "COUNT_FAVORITES")
     private Integer countFavorites;
 
-    public boolean canLikeDeck(String mail) {
+    public boolean isFavorite(String mail) {
         if (mail == null) {
             return false;
         }
         return this.getUsersFavorite()
                 .stream()
-                .noneMatch(userEntity1 -> mail.equals(userEntity1.getMail()));
+                .anyMatch(userEntity1 -> mail.equals(userEntity1.getMail()));
     }
 }
