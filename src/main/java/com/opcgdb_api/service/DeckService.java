@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -48,7 +47,7 @@ public class DeckService {
         addColorsToFilter(builder, colorsId);
         addKeywordToFilter(builder, keyword);
         addOnlyFavoriteToFilter(builder, connectedUser);
-        Page<DeckEntity> results = deckDao.findAll(builder.build(), pageable, Sort.by("countFavorites"));
+        Page<DeckEntity> results = deckDao.findAll(builder.build(), pageable);
         return new PageImpl<>(
                 results.getContent()
                         .stream()

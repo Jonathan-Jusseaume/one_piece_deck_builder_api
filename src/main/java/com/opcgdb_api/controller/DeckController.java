@@ -37,7 +37,7 @@ public class DeckController {
     @GetMapping
     public Page<Deck> list(
             @PageableDefault(size = 25)
-            @SortDefault(sort = "creationDate", direction = Sort.Direction.DESC)
+            @SortDefault(sort = {"countFavorites", "creationDate"}, direction = Sort.Direction.DESC)
                     Pageable pageable,
             @RequestParam(required = false, name = "colorId")
             @Parameter(name = "colorId",
