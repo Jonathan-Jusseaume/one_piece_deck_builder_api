@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -40,7 +41,7 @@ public class DeckEntity {
             joinColumns = @JoinColumn(name = "DECK_ID"),
             inverseJoinColumns = @JoinColumn(name = "USER_MAIL")
     )
-    private List<UserEntity> usersFavorite;
+    private Set<UserEntity> usersFavorite;
 
     @Column(name = "NAME")
     private String name;

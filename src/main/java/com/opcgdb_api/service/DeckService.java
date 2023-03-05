@@ -98,7 +98,7 @@ public class DeckService {
             deckEntity.setUsersFavorite(deckEntity.getUsersFavorite()
                     .stream()
                     .filter(userEntity -> !userEntity.getMail().equals(connectedUser.getMail()))
-                    .collect(Collectors.toList()));
+                    .collect(Collectors.toSet()));
             deckEntity.setCountFavorites(deckEntity.getCountFavorites() - 1);
         }
         return new Deck(deckDao.save(deckEntity), language, userToSave.getMail());
