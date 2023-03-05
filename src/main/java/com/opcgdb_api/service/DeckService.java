@@ -37,45 +37,71 @@ public class DeckService {
 
     private final CardDao cardDao;
 
-    public Page<Deck> list(Pageable pageable, String mail, Set<Long> colorsId, String keyword, String language) {
+    public Page<Deck> list(Pageable pageable, boolean onlyUserDeck, Set<Long> colorsId, String keyword, User connectedUser,
+                           boolean onlyFavorite, String language) {
         if (pageable == null) {
             pageable = Pageable.ofSize(25);
         }
         SpecificationBuilder<DeckEntity> builder = new SpecificationBuilder<>();
         builder.with(DeckSpecification.distinct());
-        addMailToFilter(builder, mail);
+        addMailToFilter(builder, connectedUser, onlyUserDeck);
         addColorsToFilter(builder, colorsId);
         addKeywordToFilter(builder, keyword);
+        addOnlyFavoriteToFilter(builder, connectedUser, onlyFavorite);
         Page<DeckEntity> results = deckDao.findAll(builder.build(), pageable);
         return new PageImpl<>(
                 results.getContent()
                         .stream()
-                        .map(cardEntity -> new Deck(cardEntity, language))
+                        .map(cardEntity -> new Deck(cardEntity, language,
+                                (connectedUser != null) ? connectedUser.getMail() : null))
                         .collect(Collectors.toList()),
                 pageable, results.getTotalElements());
     }
 
-    public Deck read(UUID id, String language) throws ResponseStatusException {
-        Optional<DeckEntity> deckEntity = deckDao.findById(id);
-        if (deckEntity.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Deck with the given id doesn't exist");
-        }
-        return new Deck(deckEntity.get(), language);
+    public Deck read(UUID id, String language, String mail) throws ResponseStatusException {
+        return new Deck(this.readById(id), language, mail);
     }
 
     public Deck create(Deck deck, String language) throws InvalidParameterException {
-        Optional<UserEntity> optionalUserEntity = userDao.findById(deck.getUser().getMail());
-
-
         if (!isDeckValid(deck)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Deck is not valid");
         }
-
-        UserEntity userToSave = optionalUserEntity.orElseGet(() -> userDao.saveAndFlush(deck.getUser().toEntity()));
+        UserEntity userToSave = this.saveUserIfNotExists(deck.getUser());
         deck.setId(UUID.randomUUID());
         deck.setUser(new User(userToSave));
         deck.setCreationDate(new Date(Calendar.getInstance().getTime().getTime()));
-        return new Deck(deckDao.save(deck.toEntity()), language);
+        return new Deck(deckDao.save(deck.toEntity()), language, userToSave.getMail());
+    }
+
+    public Deck favorite(UUID id, User connectedUser, String language) throws ResponseStatusException {
+        return favoriteAction(id, connectedUser, language, true);
+    }
+
+    public Deck unfavorite(UUID id, User connectedUser, String language) {
+        return favoriteAction(id, connectedUser, language, false);
+    }
+
+    private Deck favoriteAction(UUID id, User connectedUser, String language, boolean makeFavorite) throws ResponseStatusException {
+        DeckEntity deckEntity = this.readById(id);
+        UserEntity userToSave = this.saveUserIfNotExists(connectedUser);
+        if (deckEntity.isFavorite(userToSave.getMail()) && makeFavorite) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You have already make this deck as favorite");
+        }
+        if (!deckEntity.isFavorite(userToSave.getMail()) && !makeFavorite) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "You can't unfavorite a deck which is not your favorite");
+        }
+
+        if (makeFavorite) {
+            deckEntity.getUsersFavorite().add(userToSave);
+            deckEntity.setCountFavorites(deckEntity.getCountFavorites() + 1);
+        } else {
+            deckEntity.setUsersFavorite(deckEntity.getUsersFavorite()
+                    .stream()
+                    .filter(userEntity -> !userEntity.getMail().equals(connectedUser.getMail()))
+                    .collect(Collectors.toSet()));
+            deckEntity.setCountFavorites(deckEntity.getCountFavorites() - 1);
+        }
+        return new Deck(deckDao.save(deckEntity), language, userToSave.getMail());
     }
 
     public void delete(UUID id, String mail) throws ResponseStatusException {
@@ -87,6 +113,19 @@ public class DeckService {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "This is not your deck");
         }
         this.deckDao.deleteById(id);
+    }
+
+    private UserEntity saveUserIfNotExists(User user) {
+        Optional<UserEntity> optionalUserEntity = userDao.findById(user.getMail());
+        return optionalUserEntity.orElseGet(() -> userDao.saveAndFlush(user.toEntity()));
+    }
+
+    private DeckEntity readById(UUID id) throws ResponseStatusException {
+        Optional<DeckEntity> deckEntity = deckDao.findById(id);
+        if (deckEntity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Deck with the given id doesn't exist");
+        }
+        return deckEntity.get();
     }
 
     private boolean isDeckValid(Deck deck) {
@@ -147,9 +186,9 @@ public class DeckService {
                                 .anyMatch(colorId -> color.getId().equals(colorId)));
     }
 
-    private void addMailToFilter(SpecificationBuilder<DeckEntity> builder, String mail) {
-        if (mail != null && !mail.isEmpty()) {
-            builder.with(DeckSpecification.byUserMail(mail));
+    private void addMailToFilter(SpecificationBuilder<DeckEntity> builder, User userConnected, boolean onlyUserDeck) {
+        if (onlyUserDeck && userConnected != null) {
+            builder.with(DeckSpecification.byUserMail(userConnected.getMail()));
         }
     }
 
@@ -162,6 +201,12 @@ public class DeckService {
     private void addColorsToFilter(SpecificationBuilder<DeckEntity> builder, Set<Long> colorsId) {
         if (colorsId != null && !colorsId.isEmpty()) {
             builder.with(DeckSpecification.byColorId(colorsId));
+        }
+    }
+
+    private void addOnlyFavoriteToFilter(SpecificationBuilder<DeckEntity> builder, User connectedUser, boolean onlyFavorite) {
+        if (connectedUser != null && connectedUser.getMail() != null && onlyFavorite) {
+            builder.with(DeckSpecification.byUserFavoriteDeck(connectedUser.getMail()));
         }
     }
 

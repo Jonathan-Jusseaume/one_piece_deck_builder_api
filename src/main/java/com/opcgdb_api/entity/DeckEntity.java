@@ -7,6 +7,7 @@ import lombok.experimental.Accessors;
 import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -35,6 +36,13 @@ public class DeckEntity {
     )
     private List<CardEntity> cards;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinTable(name = "UT_DECK_FAVORITE",
+            joinColumns = @JoinColumn(name = "DECK_ID"),
+            inverseJoinColumns = @JoinColumn(name = "USER_MAIL")
+    )
+    private Set<UserEntity> usersFavorite;
+
     @Column(name = "NAME")
     private String name;
 
@@ -44,4 +52,15 @@ public class DeckEntity {
     @Column(name = "DESCRIPTION")
     private String description;
 
+    @Column(name = "COUNT_FAVORITES")
+    private Integer countFavorites;
+
+    public boolean isFavorite(String mail) {
+        if (mail == null) {
+            return false;
+        }
+        return this.getUsersFavorite()
+                .stream()
+                .anyMatch(userEntity1 -> mail.equals(userEntity1.getMail()));
+    }
 }

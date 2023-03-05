@@ -34,7 +34,11 @@ public class Deck {
 
     private Date creationDate;
 
-    public Deck(DeckEntity deckEntity, String languageCode) {
+    private Integer countFavorites = 0;
+
+    private boolean isFavorite = false;
+
+    public Deck(DeckEntity deckEntity, String languageCode, String mail) {
         this.id = deckEntity.getId();
         this.cards = deckEntity.getCards().stream()
                 .map(cardEntity -> new Card(cardEntity, languageCode))
@@ -43,6 +47,8 @@ public class Deck {
         this.name = deckEntity.getName();
         this.creationDate = deckEntity.getCreationDate();
         this.description = deckEntity.getDescription();
+        this.countFavorites = deckEntity.getCountFavorites();
+        this.isFavorite = deckEntity.isFavorite(mail);
     }
 
     public DeckEntity toEntity() {
@@ -56,6 +62,7 @@ public class Deck {
                 .setLeader(new CardEntity().setId(leader.getId()))
                 .setDescription(description)
                 .setName(name)
-                .setCreationDate(creationDate);
+                .setCreationDate(creationDate)
+                .setCountFavorites(countFavorites);
     }
 }
