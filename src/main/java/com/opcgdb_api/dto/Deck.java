@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.sql.Date;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -63,6 +65,7 @@ public class Deck {
                 .setDescription(description)
                 .setName(name)
                 .setCreationDate(creationDate)
+                .setUsersFavorite(Collections.emptySet())
                 .setCountFavorites(countFavorites);
     }
 }
