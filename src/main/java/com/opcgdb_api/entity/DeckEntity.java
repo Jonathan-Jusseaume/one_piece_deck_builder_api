@@ -56,7 +56,7 @@ public class DeckEntity {
     private Integer countFavorites;
 
     public boolean isFavorite(String mail) {
-        if (mail == null) {
+        if (mail == null || this.getUsersFavorite() == null) {
             return false;
         }
         return this.getUsersFavorite()
