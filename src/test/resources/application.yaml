@@ -1,0 +1,38 @@
+server:
+  port: 8080
+  tomcat:
+    use-relative-redirects: true
+    remote_ip_header: x-forwarded-for
+    protocol_header: x-forwarded-proto
+    internal-proxies: .*
+    forward-headers-strategry: NATIVE
+  servlet:
+    context-path: /api
+spring:
+  datasource:
+    url: jdbc:h2:mem:db;DB_CLOSE_DELAY=-1
+    username: sa
+    password: sa
+    driver-class-name: org.h2.Driver
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${OAUTH_CLIENT_ID}
+            client-secret: ${OAUTH_CLIENT_SECRET}
+            scope: openid,profile,email
+      resourceserver:
+        jwt:
+          issuer-uri: https://accounts.google.com
+          jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+  web:
+    resources:
+      static-locations: classpath:/static/
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    operationsSorter: method
+
+

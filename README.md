@@ -1,12 +1,10 @@
-`# One Piece Deck Builder API:
+# One Piece Deck Builder API:
 
-Version: 1.2.1 Api of One Piece Deck Builder
+Version: 1.3.0 Api of One Piece Deck Builder
 
-## New features: API 1.2.0
+## New features: API 1.3.0
 
-- You can now make a deck as favorite (star)
-- New filter in order to have only favorite decks
-- Decks are now sorted according to the number of stars`
+- New filter around rarities in order to manage "SP CARD"
+- Make an association between the artwork of a card and the product
+- Card images are now in English for products released worldwide
 
-## Bug fixes: API 1.2.1
-- Null pointer exception when create a deck
