@@ -23,17 +23,6 @@ public class CardEntity {
     @JoinColumn(name = "TYPE_ID")
     private TypeEntity type;
 
-    @ManyToMany
-    @JoinTable(name = "UT_CARD_PRODUCT",
-            joinColumns = @JoinColumn(name = "CARD_ID"),
-            inverseJoinColumns = @JoinColumn(name = "PRODUCT_ID")
-    )
-    private Set<ProductEntity> products;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "RARITY_ID")
-    private RarityEntity rarity;
-
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTRIBUTE_ID")
     private AttributeEntity attribute;

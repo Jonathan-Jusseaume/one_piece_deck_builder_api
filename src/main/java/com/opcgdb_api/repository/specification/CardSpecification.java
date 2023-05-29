@@ -76,7 +76,10 @@ public class CardSpecification {
     }
 
     public static Specification<CardEntity> byRarity(Set<Long> rarityId) {
-        return ((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.in(root.get("rarity").get("id")).value(rarityId));
+        return ((root, criteriaQuery, criteriaBuilder) -> {
+            SetJoin<CardEntity, CardImageEntity> join = root.joinSet("images");
+            return join.get("rarity").get("id").in(rarityId);
+        });
     }
 
     public static Specification<CardEntity> byCost(Set<Integer> costs) {
@@ -96,8 +99,8 @@ public class CardSpecification {
 
     public static Specification<CardEntity> byProductId(Set<String> productsId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            SetJoin<CardEntity, ProductEntity> join = root.joinSet("products");
-            return join.get("id").in(productsId);
+            SetJoin<CardEntity, CardImageEntity> join = root.joinSet("images");
+            return join.get("product").get("id").in(productsId);
         });
     }
 }

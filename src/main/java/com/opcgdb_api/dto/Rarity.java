@@ -30,7 +30,7 @@ public class Rarity implements Comparable {
     }
 
     private int getRarityValueById(Long id) {
-        int[] rarityValues = {0, 1, 2, 4, 5, 3, 6};
+        int[] rarityValues = {0, 1, 2, 4, 5, 3, 6, 7};
         return rarityValues[Math.toIntExact(id)];
     }
 }
