@@ -22,8 +22,6 @@ public class Card {
 
     private Type type;
 
-    private Set<Product> products;
-
     private List<Color> colors;
 
     private List<Tag> tags;
@@ -42,25 +40,20 @@ public class Card {
 
     private Integer counter;
 
-    private Rarity rarity;
-
-    private List<String> images;
+    private List<CardImage> images;
 
     public Card(CardEntity cardEntity, String languageCode) {
         this.id = cardEntity.getId();
         this.type = new Type(cardEntity.getType(), languageCode);
-        this.products = cardEntity.getProducts()
-                .stream()
-                .map(productEntity -> new Product(productEntity, languageCode))
-                .collect(Collectors.toSet());
-        this.rarity = new Rarity(cardEntity.getRarity());
         if (cardEntity.getAttribute() != null) {
             this.attribute = new Attribute(cardEntity.getAttribute(), languageCode);
         }
         this.cost = cardEntity.getCost();
         this.counter = cardEntity.getCounter();
         this.life = cardEntity.getLife();
-        this.images = cardEntity.getImages().stream().map(CardImageEntity::getName).sorted().collect(Collectors.toList());
+        this.images = cardEntity.getImages().stream().map(cardImageEntity -> new CardImage(cardImageEntity, languageCode))
+                .sorted()
+                .collect(Collectors.toList());
         this.power = cardEntity.getPower();
         this.colors = cardEntity.getColors()
                 .stream()
