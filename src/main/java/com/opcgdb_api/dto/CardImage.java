@@ -1,15 +1,19 @@
 package com.opcgdb_api.dto;
 
 import com.opcgdb_api.entity.CardImageEntity;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
+@EqualsAndHashCode
 public class CardImage implements Comparable<CardImage> {
 
     private String filename;
@@ -28,4 +32,5 @@ public class CardImage implements Comparable<CardImage> {
     public int compareTo(CardImage o) {
         return this.getFilename().compareTo(o.getFilename());
     }
+
 }

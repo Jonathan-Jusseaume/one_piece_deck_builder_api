@@ -9,7 +9,6 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.sql.Date;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -40,15 +39,17 @@ public class Deck {
 
     private boolean isFavorite = false;
 
-    public Deck(DeckEntity deckEntity, String languageCode, String mail) {
+    public Deck(DeckEntity deckEntity, String languageCode, String mail, boolean complete) {
         this.id = deckEntity.getId();
-        this.cards = deckEntity.getCards().stream()
-                .map(cardEntity -> new Card(cardEntity, languageCode))
-                .collect(Collectors.toList());
+        if (complete) {
+            this.cards = deckEntity.getCards().stream()
+                    .map(cardEntity -> new Card(cardEntity, languageCode))
+                    .collect(Collectors.toList());
+            this.description = deckEntity.getDescription();
+        }
         this.leader = new Card(deckEntity.getLeader(), languageCode);
         this.name = deckEntity.getName();
         this.creationDate = deckEntity.getCreationDate();
-        this.description = deckEntity.getDescription();
         this.countFavorites = deckEntity.getCountFavorites();
         this.isFavorite = deckEntity.isFavorite(mail);
     }

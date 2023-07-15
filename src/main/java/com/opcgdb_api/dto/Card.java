@@ -2,14 +2,12 @@ package com.opcgdb_api.dto;
 
 import com.opcgdb_api.entity.CardDescriptionEntity;
 import com.opcgdb_api.entity.CardEntity;
-import com.opcgdb_api.entity.CardImageEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter

@@ -3,6 +3,7 @@ package com.opcgdb_api.dto;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.opcgdb_api.entity.TagDescriptionEntity;
 import com.opcgdb_api.entity.TagEntity;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JsonDeserialize
 @NoArgsConstructor
-public class Tag implements Comparable {
+@EqualsAndHashCode
+public class Tag implements Comparable<Tag> {
 
     private Long id;
 
@@ -30,10 +32,7 @@ public class Tag implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (!(o instanceof Tag)) {
-            return -1;
-        }
-        return this.getLabel().compareTo(((Tag) o).getLabel());
+    public int compareTo(Tag tag) {
+        return this.getLabel().compareTo((tag.getLabel()));
     }
 }

@@ -22,7 +22,7 @@ public class CardSpecification {
 
     public static Specification<CardEntity> byKeyword(String keyword) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            SetJoin<CardEntity, CardDescriptionEntity> join = root.joinSet("descriptions");
+            SetJoin<CardEntity, CardDescriptionEntity> join = root.joinSet(SpecificationKeyEnum.CARD_DESCRIPTION.toString());
             Predicate predicate = null;
             for (String word : keyword.split(" ")) {
                 Predicate predicateWord;
@@ -30,19 +30,19 @@ public class CardSpecification {
                     predicateWord =
                             criteriaBuilder.and(
                                     criteriaBuilder.or(
-                                            criteriaBuilder.isNull(join.get("effect"))
+                                            criteriaBuilder.isNull(join.get(SpecificationKeyEnum.EFFECT.toString()))
                                             , criteriaBuilder.not(
-                                                    criteriaBuilder.like(criteriaBuilder.lower(join.get("effect")),
+                                                    criteriaBuilder.like(criteriaBuilder.lower(join.get(SpecificationKeyEnum.EFFECT.toString())),
                                                             "%" + word.substring(1).toLowerCase() + "%")
                                             )
                                     ),
-                                    criteriaBuilder.not(criteriaBuilder.like(criteriaBuilder.lower(join.get("name")),
+                                    criteriaBuilder.not(criteriaBuilder.like(criteriaBuilder.lower(join.get(SpecificationKeyEnum.NAME.toString())),
                                             "%" + word.substring(1).toLowerCase() + "%")));
                 } else {
                     predicateWord =
                             criteriaBuilder.or(
-                                    criteriaBuilder.like(criteriaBuilder.lower(join.get("effect")), "%" + word.toLowerCase() + "%"),
-                                    criteriaBuilder.like(criteriaBuilder.lower(join.get("name")), "%" + word.toLowerCase() + "%"));
+                                    criteriaBuilder.like(criteriaBuilder.lower(join.get(SpecificationKeyEnum.EFFECT.toString())), "%" + word.toLowerCase() + "%"),
+                                    criteriaBuilder.like(criteriaBuilder.lower(join.get(SpecificationKeyEnum.NAME.toString())), "%" + word.toLowerCase() + "%"));
                 }
 
                 if (predicate != null) {
@@ -57,50 +57,53 @@ public class CardSpecification {
 
     public static Specification<CardEntity> byTypeId(Set<Long> typesId) {
         return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder
-                .in(root.get("type").get("id"))
+                .in(root.get(SpecificationKeyEnum.TYPE.toString())
+                        .get(SpecificationKeyEnum.ID.toString()))
                 .value(typesId);
     }
 
     public static Specification<CardEntity> byColorId(Set<Long> colorsId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            SetJoin<CardEntity, ColorEntity> join = root.joinSet("colors");
-            return join.get("id").in(colorsId);
+            SetJoin<CardEntity, ColorEntity> join = root.joinSet(SpecificationKeyEnum.COLOR.toString());
+            return join.get(SpecificationKeyEnum.ID.toString()).in(colorsId);
         });
     }
 
     public static Specification<CardEntity> byTagId(Set<Long> tagsId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            SetJoin<CardEntity, TagEntity> join = root.joinSet("tags");
-            return join.get("id").in(tagsId);
+            SetJoin<CardEntity, TagEntity> join = root.joinSet(SpecificationKeyEnum.TAG.toString());
+            return join.get(SpecificationKeyEnum.ID.toString()).in(tagsId);
         });
     }
 
     public static Specification<CardEntity> byRarity(Set<Long> rarityId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            SetJoin<CardEntity, CardImageEntity> join = root.joinSet("images");
-            return join.get("rarity").get("id").in(rarityId);
+            SetJoin<CardEntity, CardImageEntity> join = root.joinSet(SpecificationKeyEnum.IMAGE.toString());
+            return join.get(SpecificationKeyEnum.RARITY.toString()).get(SpecificationKeyEnum.ID.toString()).in(rarityId);
         });
     }
 
     public static Specification<CardEntity> byCost(Set<Integer> costs) {
         return ((root, criteriaQuery, criteriaBuilder) ->
                 criteriaBuilder.and(
-                        criteriaBuilder.isNotNull(root.get("cost")),
-                        criteriaBuilder.in(root.get("cost")).value(costs)));
+                        criteriaBuilder.isNotNull(root.get(SpecificationKeyEnum.COST.toString())),
+                        criteriaBuilder.in(root.get(SpecificationKeyEnum.COST.toString())).value(costs)));
     }
 
 
     public static Specification<CardEntity> byPower(Set<Integer> powers) {
         return ((root, criteriaQuery, criteriaBuilder) ->
                 criteriaBuilder.and(
-                        criteriaBuilder.isNotNull(root.get("power")),
-                        criteriaBuilder.in(root.get("power")).value(powers)));
+                        criteriaBuilder.isNotNull(root.get(SpecificationKeyEnum.POWER.toString())),
+                        criteriaBuilder.in(root.get(SpecificationKeyEnum.POWER.toString())).value(powers)));
     }
 
     public static Specification<CardEntity> byProductId(Set<String> productsId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            SetJoin<CardEntity, CardImageEntity> join = root.joinSet("images");
-            return join.get("product").get("id").in(productsId);
+            SetJoin<CardEntity, CardImageEntity> join = root.joinSet(SpecificationKeyEnum.IMAGE.toString());
+            return join.get(SpecificationKeyEnum.PRODUCT.toString())
+                    .get(SpecificationKeyEnum.ID.toString())
+                    .in(productsId);
         });
     }
 }

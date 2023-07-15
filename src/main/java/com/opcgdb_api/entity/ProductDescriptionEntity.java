@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @Setter
@@ -13,7 +14,9 @@ import javax.persistence.*;
 @Entity
 @Table(name = "UT_PRODUCT_DESCRIPTION", schema = "public")
 @IdClass(ProductDescriptionKey.class)
-public class ProductDescriptionEntity {
+public class ProductDescriptionEntity implements Serializable {
+
+    private static final long serialVersionUID = 3L;
 
     @Id
     @Column(name = "PRODUCT_ID", nullable = false)

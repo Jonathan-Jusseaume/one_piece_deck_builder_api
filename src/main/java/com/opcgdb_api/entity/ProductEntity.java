@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.Set;
 
@@ -13,7 +14,9 @@ import java.util.Set;
 @Accessors(chain = true)
 @Entity
 @Table(name = "UT_PRODUCT", schema = "public")
-public class ProductEntity {
+public class ProductEntity implements Serializable {
+
+    private static final long serialVersionUID = 2L;
 
     @Id
     @Column(name = "ID", nullable = false)

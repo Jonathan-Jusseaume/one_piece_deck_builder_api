@@ -1,6 +1,7 @@
 package com.opcgdb_api.dto;
 
 import com.opcgdb_api.entity.RarityEntity;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,7 +11,8 @@ import lombok.experimental.Accessors;
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
-public class Rarity implements Comparable {
+@EqualsAndHashCode
+public class Rarity implements Comparable<Rarity> {
 
     private Long id;
 
@@ -22,11 +24,8 @@ public class Rarity implements Comparable {
     }
 
     @Override
-    public int compareTo(Object o) {
-        if (!(o instanceof Rarity)) {
-            return -1;
-        }
-        return getRarityValueById(this.id) - getRarityValueById(((Rarity) o).getId());
+    public int compareTo(Rarity rarity) {
+        return getRarityValueById(this.id) - getRarityValueById(rarity.getId());
     }
 
     private int getRarityValueById(Long id) {

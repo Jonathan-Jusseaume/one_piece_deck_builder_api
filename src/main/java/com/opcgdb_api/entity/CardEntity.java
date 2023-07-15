@@ -1,6 +1,5 @@
 package com.opcgdb_api.entity;
 
-import com.opcgdb_api.dto.Deck;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;

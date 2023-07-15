@@ -25,7 +25,9 @@ public class DeckSpecification {
     }
 
     public static Specification<DeckEntity> byUserMail(String mail) {
-        return ((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(root.get("user").get("mail"), mail));
+        return ((root, criteriaQuery, criteriaBuilder) -> criteriaBuilder.equal(
+                root.get(SpecificationKeyEnum.USER.toString())
+                        .get(SpecificationKeyEnum.MAIL.toString()), mail));
     }
 
     public static Specification<DeckEntity> byKeyword(String keyword) {
@@ -37,19 +39,19 @@ public class DeckSpecification {
                     predicateWord =
                             criteriaBuilder.and(
                                     criteriaBuilder.or(
-                                            criteriaBuilder.isNull(root.get("description"))
+                                            criteriaBuilder.isNull(root.get(SpecificationKeyEnum.DECK_DESCRIPTION.toString()))
                                             , criteriaBuilder.not(
-                                                    criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),
+                                                    criteriaBuilder.like(criteriaBuilder.lower(root.get(SpecificationKeyEnum.DECK_DESCRIPTION.toString())),
                                                             "%" + word.substring(1).toLowerCase() + "%")
                                             )
                                     ),
-                                    criteriaBuilder.not(criteriaBuilder.like(criteriaBuilder.lower(root.get("name")),
+                                    criteriaBuilder.not(criteriaBuilder.like(criteriaBuilder.lower(root.get(SpecificationKeyEnum.NAME.toString())),
                                             "%" + word.substring(1).toLowerCase() + "%")));
                 } else {
                     predicateWord =
                             criteriaBuilder.or(
-                                    criteriaBuilder.like(criteriaBuilder.lower(root.get("description")), "%" + word.toLowerCase() + "%"),
-                                    criteriaBuilder.like(criteriaBuilder.lower(root.get("name")), "%" + word.toLowerCase() + "%"));
+                                    criteriaBuilder.like(criteriaBuilder.lower(root.get(SpecificationKeyEnum.DECK_DESCRIPTION.toString())), "%" + word.toLowerCase() + "%"),
+                                    criteriaBuilder.like(criteriaBuilder.lower(root.get(SpecificationKeyEnum.NAME.toString())), "%" + word.toLowerCase() + "%"));
                 }
 
                 if (predicate != null) {
@@ -64,16 +66,16 @@ public class DeckSpecification {
 
     public static Specification<DeckEntity> byColorId(Set<Long> colorsId) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            Join<DeckEntity, CardEntity> join = root.join("leader");
-            SetJoin<CardEntity, ColorEntity> colorsJoin = join.joinSet("colors");
-            return colorsJoin.get("id").in(colorsId);
+            Join<DeckEntity, CardEntity> join = root.join(SpecificationKeyEnum.LEADER.toString());
+            SetJoin<CardEntity, ColorEntity> colorsJoin = join.joinSet(SpecificationKeyEnum.COLOR.toString());
+            return colorsJoin.get(SpecificationKeyEnum.ID.toString()).in(colorsId);
         });
     }
 
     public static Specification<DeckEntity> byUserFavoriteDeck(String mail) {
         return ((root, criteriaQuery, criteriaBuilder) -> {
-            SetJoin<DeckEntity, UserEntity> join = root.joinSet("usersFavorite");
-            return join.get("mail").in(mail);
+            SetJoin<DeckEntity, UserEntity> join = root.joinSet(SpecificationKeyEnum.USERS_FAVORITE.toString());
+            return join.get(SpecificationKeyEnum.MAIL.toString()).in(mail);
         });
     }
 }

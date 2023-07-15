@@ -53,13 +53,14 @@ public class DeckService {
                 results.getContent()
                         .stream()
                         .map(cardEntity -> new Deck(cardEntity, language,
-                                (connectedUser != null) ? connectedUser.getMail() : null))
+                                (connectedUser != null) ? connectedUser.getMail() : null,
+                                false))
                         .collect(Collectors.toList()),
                 pageable, results.getTotalElements());
     }
 
     public Deck read(UUID id, String language, String mail) throws ResponseStatusException {
-        return new Deck(this.readById(id), language, mail);
+        return new Deck(this.readById(id), language, mail, true);
     }
 
     public Deck create(Deck deck, String language) throws InvalidParameterException {
@@ -70,7 +71,7 @@ public class DeckService {
         deck.setId(UUID.randomUUID());
         deck.setUser(new User(userToSave));
         deck.setCreationDate(new Date(Calendar.getInstance().getTime().getTime()));
-        return new Deck(deckDao.save(deck.toEntity()), language, userToSave.getMail());
+        return new Deck(deckDao.save(deck.toEntity()), language, userToSave.getMail(), true);
     }
 
     public Deck favorite(UUID id, User connectedUser, String language) throws ResponseStatusException {
@@ -101,7 +102,7 @@ public class DeckService {
                     .collect(Collectors.toSet()));
             deckEntity.setCountFavorites(deckEntity.getCountFavorites() - 1);
         }
-        return new Deck(deckDao.save(deckEntity), language, userToSave.getMail());
+        return new Deck(deckDao.save(deckEntity), language, userToSave.getMail(), true);
     }
 
     public void delete(UUID id, String mail) throws ResponseStatusException {
