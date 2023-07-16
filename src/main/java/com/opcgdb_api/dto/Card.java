@@ -38,6 +38,8 @@ public class Card {
 
     private Integer counter;
 
+    private CompetitiveStatus competitiveStatus;
+
     private List<CardImage> images;
 
     public Card(CardEntity cardEntity, String languageCode) {
@@ -62,6 +64,7 @@ public class Card {
                 .map(tagEntity -> new Tag(tagEntity, languageCode))
                 .sorted()
                 .collect(Collectors.toList());
+        this.competitiveStatus = new CompetitiveStatus(cardEntity.getCompetitiveStatus(), languageCode);
         for (CardDescriptionEntity description : cardEntity.getDescriptions()) {
             if (description.getLanguageCode().equals(languageCode)) {
                 this.label = description.getName();

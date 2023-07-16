@@ -4,10 +4,12 @@ public enum SpecificationKeyEnum {
 
     CARD_DESCRIPTION("descriptions"),
     COLOR("colors"),
+    COMPETITIVE_STATUS("competitiveStatus"),
     COST("cost"),
     DECK_DESCRIPTION("description"),
     EFFECT("effect"),
     ID("id"),
+
     IMAGE("images"),
     LEADER("leader"),
     MAIL("mail"),

@@ -18,11 +18,15 @@ public class CardEntity {
     @Column(name = "ID", nullable = false)
     private String id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "TYPE_ID")
     private TypeEntity type;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "STATUS_ID")
+    private CompetitiveStatusEntity competitiveStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ATTRIBUTE_ID")
     private AttributeEntity attribute;
 
@@ -36,13 +40,6 @@ public class CardEntity {
             inverseJoinColumns = @JoinColumn(name = "COLOR_ID")
     )
     private Set<ColorEntity> colors;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "UT_CARD_DECK",
-            joinColumns = @JoinColumn(name = "CARD_ID"),
-            inverseJoinColumns = @JoinColumn(name = "DECK_ID")
-    )
-    private Set<DeckEntity> decks;
 
     @ManyToMany
     @JoinTable(name = "UT_CARD_TAG",
@@ -66,5 +63,6 @@ public class CardEntity {
 
     @Column(name = "COUNTER")
     private Integer counter;
+
 
 }

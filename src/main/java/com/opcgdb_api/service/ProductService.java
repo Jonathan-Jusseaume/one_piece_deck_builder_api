@@ -20,6 +20,7 @@ public class ProductService {
         return productDao.findAll()
                 .stream()
                 .map(productEntity -> new Product(productEntity, languageCode))
+                .sorted()
                 .collect(Collectors.toList());
     }
 

@@ -2,6 +2,7 @@ package com.opcgdb_api.dto;
 
 import com.opcgdb_api.entity.ProductDescriptionEntity;
 import com.opcgdb_api.entity.ProductEntity;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +14,8 @@ import java.util.Date;
 @Setter
 @Accessors(chain = true)
 @NoArgsConstructor
-public class Product {
+@EqualsAndHashCode
+public class Product implements Comparable<Product> {
 
     private String id;
 
@@ -30,5 +32,10 @@ public class Product {
                 break;
             }
         }
+    }
+
+    @Override
+    public int compareTo(Product product) {
+        return this.id.compareTo(product.getId());
     }
 }

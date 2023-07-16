@@ -30,6 +30,7 @@ public class CardService {
                            Set<String> productsId,
                            Set<Integer> costs,
                            Set<Integer> powers,
+                           Set<Long> competitiveStatusId,
                            String keyword,
                            String languageCode) {
         if (pageable == null) {
@@ -45,6 +46,7 @@ public class CardService {
         addCostsToFilter(builder, costs);
         addPowersToFilter(builder, powers);
         addKeywordToFilter(builder, keyword);
+        addCompetitiveStatusToFilter(builder, competitiveStatusId);
         Page<CardEntity> results = cardDao.findAll(builder.build(), pageable);
         return new PageImpl<>(
                 results.getContent()
@@ -52,6 +54,12 @@ public class CardService {
                         .map(cardEntity -> new Card(cardEntity, languageCode))
                         .collect(Collectors.toList()),
                 pageable, results.getTotalElements());
+    }
+
+    private void addCompetitiveStatusToFilter(SpecificationBuilder<CardEntity> builder, Set<Long> competitiveStatusId) {
+        if (competitiveStatusId != null && !competitiveStatusId.isEmpty()) {
+            builder.with(CardSpecification.byCompetitiveStatusId(competitiveStatusId));
+        }
     }
 
     private void addKeywordToFilter(SpecificationBuilder<CardEntity> builder, String keyword) {

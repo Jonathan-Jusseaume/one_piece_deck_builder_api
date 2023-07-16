@@ -31,40 +31,44 @@ public class CardController {
     public Page<Card> list(
             @PageableDefault(size = 25)
             @SortDefault(sort = "id", direction = Sort.Direction.ASC)
-                    Pageable pageable,
+            Pageable pageable,
             @RequestParam(required = false, name = "typeId")
             @Parameter(name = "typeId",
                     description = "Type Id of the card. You can put multiple values")
-                    Set<Long> typesId,
+            Set<Long> typesId,
             @RequestParam(required = false, name = "colorId")
             @Parameter(name = "colorId",
                     description = "Color Id of the card. You can put multiple values")
-                    Set<Long> colorId,
+            Set<Long> colorId,
             @RequestParam(required = false, name = "tagId")
             @Parameter(name = "tagId",
                     description = "Tag Id of the card. You can put multiple values")
-                    Set<Long> tagsId,
+            Set<Long> tagsId,
             @RequestParam(required = false, name = "rarityId")
             @Parameter(name = "rarityId",
                     description = "Rarity Id of the card. You can put multiple values")
-                    Set<Long> raritiesId,
+            Set<Long> raritiesId,
             @RequestParam(required = false, name = "productId")
             @Parameter(name = "productId",
                     description = "Product Id of the card. You can put multiple values")
-                    Set<String> productsId,
+            Set<String> productsId,
             @RequestParam(required = false, name = "cost")
             @Parameter(name = "costs",
                     description = "Cost value of the card. You can put multiple values")
-                    Set<Integer> costs,
+            Set<Integer> costs,
             @RequestParam(required = false, name = "power")
             @Parameter(name = "power",
                     description = "Power value of the card. You can put multiple values")
-                    Set<Integer> powers,
+            Set<Integer> powers,
+            @RequestParam(required = false)
+            @Parameter(name = "competitiveStatusId",
+                    description = "Competitive Status Id of the card. You can put multiple values")
+            Set<Long> competitiveStatusId,
             @RequestParam(required = false)
             @Parameter(name = "keyword",
                     description = "Keywords which are in the card name or the card description. You can prefix them with \"!\" " +
                             "in order to search cards which don't have this word.")
-                    String keyword,
+            String keyword,
             HttpServletRequest request) {
         return cardService.list(pageable,
                 typesId,
@@ -74,6 +78,7 @@ public class CardController {
                 productsId,
                 costs,
                 powers,
+                competitiveStatusId,
                 keyword,
                 languageResolver.resolveLocale(request).getLanguage());
     }

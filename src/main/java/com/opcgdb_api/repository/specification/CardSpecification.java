@@ -106,4 +106,11 @@ public class CardSpecification {
                     .in(productsId);
         });
     }
+
+    public static Specification<CardEntity> byCompetitiveStatusId(Set<Long> competitiveStatusId) {
+        return (root, criteriaQuery, criteriaBuilder) -> criteriaBuilder
+                .in(root.get(SpecificationKeyEnum.COMPETITIVE_STATUS.toString())
+                        .get(SpecificationKeyEnum.ID.toString()))
+                .value(competitiveStatusId);
+    }
 }
